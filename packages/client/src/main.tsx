@@ -3,10 +3,11 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { api } from "./lib/api";
-import { Link } from "@tanstack/react-router";
 import { ThemeProvider } from "./components/dark-mode/theme-provider";
+import { treatyClient } from "../../api/lib/eden";
 
+export const api = treatyClient();
+export type API = typeof api;
 export const qc = new QueryClient();
 
 // Set up a Router instance

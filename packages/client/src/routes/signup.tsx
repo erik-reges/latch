@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signUp } from "@/lib/auth";
+import { signUp, useSession } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
-import { Type } from "@sinclair/typebox";
-import { TypeCompiler } from "@sinclair/typebox/compiler";
+import { Type as t } from "@sinclair/typebox";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -22,33 +21,34 @@ export const Route = createFileRoute("/signup")({
   component: SignUp,
 });
 
-const SignUpSchema = Type.Object({
-  email: Type.String({
+const SignUpSchema = t.Object({
+  email: t.String({
     format: "email",
     error: "Invalid email address",
     description: "Enter your email address",
   }),
-  password: Type.String({
+  password: t.String({
     minLength: 8,
     error: "Password must be at least 8 characters",
     description: "Enter your password (minimum 8 characters)",
   }),
 });
 
-const SignUpValidator = TypeCompiler.Compile(SignUpSchema);
-
 type SignUpFormData = Static<typeof SignUpSchema>;
 
-interface AuthSignUpProps {
-  onSuccess?: () => Promise<void> | void;
-  onError?: (error: Error) => void;
-  redirectTo?: string;
-}
-
-export function SignUp({ onSuccess, onError, redirectTo }: AuthSignUpProps) {
+export function SignUp({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const session = useSession();
+
+  console.log(session.data?.user);
+  if (session.data?.user) {
+    navigate({
+      to: "/",
+    });
+  }
 
   const {
     register,
@@ -80,7 +80,6 @@ export function SignUp({ onSuccess, onError, redirectTo }: AuthSignUpProps) {
         }
 
         reset();
-        await onSuccess?.();
         navigate({
           to: "/signin",
           search: {
@@ -96,12 +95,11 @@ export function SignUp({ onSuccess, onError, redirectTo }: AuthSignUpProps) {
               : "An error occurred during sign up";
 
         setError(errorMessage);
-        onError?.(new Error(errorMessage));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [reset, onSuccess, onError, navigate],
+    [reset, navigate],
   );
 
   return (

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Type } from "@sinclair/typebox";
-import { TypeCompiler } from "@sinclair/typebox/compiler";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,13 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth";
+import { signIn, useSession } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSearch } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 const SignInSchema = Type.Object({
   email: Type.String({
@@ -58,6 +57,17 @@ export function SignIn({}) {
       password: "",
     },
   });
+
+  const session = useSession();
+
+  console.log(session.data?.user);
+  if (session.data?.user) {
+    const navigate = useNavigate();
+
+    navigate({
+      to: "/",
+    });
+  }
 
   const onSubmit = useCallback(async (data: SignInFormData) => {
     try {

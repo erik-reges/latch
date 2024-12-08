@@ -25,7 +25,7 @@ function RootComponent() {
         <Link href="/signin">sign in</Link>
         <Link href="/signup">sign up</Link>
 
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-3 right-3">
           <ModeToggle />
         </div>
       </div>
