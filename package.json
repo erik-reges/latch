@@ -1,0 +1,21 @@
+{
+  "name": "latch",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "dev:client": "bun --cwd packages/client dev",
+    "dev:api": "bun --cwd packages/api dev",
+    "dev": "bun dev:api && bun dev:client"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

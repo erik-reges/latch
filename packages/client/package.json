@@ -1,0 +1,46 @@
+{
+  "name": "@latch/client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "dev": "bunx --bun vite --port=8080",
+    "build": "vite build",
+    "serve": "vite preview",
+    "start": "vite"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.61.6",
+    "@tanstack/router-plugin": "^1.84.4",
+    "@types/bun": "^1.1.14",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "vite": "^5.4.8"
+  },
+  "dependencies": {
+    "@elysiajs/eden": "^1.1.3",
+    "@hookform/resolvers": "^3.9.1",
+    "@latch/api": "workspace:*",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@tanstack/react-query": "^5.62.0",
+    "@tanstack/react-router": "^1.85.0",
+    "@tanstack/router-devtools": "^1.85.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.13.1",
+    "lucide-react": "^0.468.0",
+    "nuqs": "^2.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.0",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}
