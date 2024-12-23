@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Type } from "@sinclair/typebox";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn, useSession } from "@/lib/auth";
+import { isAuthenticated, signIn, useSession } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
@@ -35,6 +35,16 @@ const SignInSchema = Type.Object({
 type SignInFormData = Static<typeof SignInSchema>;
 
 export const Route = createFileRoute("/signin")({
+  beforeLoad: async ({ location }) => {
+    if (await isAuthenticated()) {
+      throw redirect({
+        to: "/",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
   validateSearch: (search: Record<string, unknown>) => {
     const email = typeof search.email === "string" ? search.email : undefined;
     return { email };
@@ -44,11 +54,14 @@ export const Route = createFileRoute("/signin")({
 
 export function SignIn({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errormsg, setError] = useState<string | null>(null);
   const { email } = Route.useSearch();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
+
     formState: { errors },
     reset,
   } = useForm<SignInFormData>({
@@ -57,17 +70,6 @@ export function SignIn({}) {
       password: "",
     },
   });
-
-  const session = useSession();
-
-  console.log(session.data?.user);
-  if (session.data?.user) {
-    const navigate = useNavigate();
-
-    navigate({
-      to: "/",
-    });
-  }
 
   const onSubmit = useCallback(async (data: SignInFormData) => {
     try {
@@ -86,6 +88,9 @@ export function SignIn({}) {
       }
 
       reset();
+      navigate({
+        to: "/",
+      });
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -102,16 +107,16 @@ export function SignIn({}) {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <Card className=" max-w-md w-full bg-stone-900">
+      <Card className=" max-w-md w-full">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
-          {error && (
+          {errormsg && (
             <div className="mb-4 p-3 rounded-md bg-destructive/15 text-destructive flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
-              <p className="text-sm">{error}</p>
+              <p className="text-sm">{errormsg}</p>
             </div>
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

@@ -9,6 +9,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
   },
   trustedOrigins: ["http://localhost:8080"],
   database: drizzleAdapter(db, {

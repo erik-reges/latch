@@ -3,7 +3,9 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "build:schema": "zero-build-schema ./zero/zero-schema.ts --out ./zero/schema.json",
+    "dev:zero": "docker-compose up"
   },
   "dependencies": {
     "@ap0nia/eden-react-query": "^1.6.0",

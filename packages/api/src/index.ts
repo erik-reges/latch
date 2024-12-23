@@ -1,14 +1,16 @@
 import { cors } from "@elysiajs/cors";
 import { auth, betterAuthView } from "../lib/auth";
-import Elysia, { type Context } from "elysia";
+import Elysia, { t, type Context } from "elysia";
 import { Logestic } from "logestic";
+import { vehiclesRouter } from "./routes/vehicles";
 
 export const port = 3000;
 export const hostname = "localhost";
 export const baseUrl = `${hostname}:${port}`;
 export const isDev = process.env.NODE_ENV !== "production";
 
-export const api = new Elysia({ prefix: "/api", precompile: true })
+export const api = new Elysia({ prefix: "/api" })
+
   .use(
     cors({
       origin: ["http://localhost:8080", "http://localhost:8080/*"],
@@ -17,12 +19,9 @@ export const api = new Elysia({ prefix: "/api", precompile: true })
   .all("/auth/*", betterAuthView)
   .use(Logestic.preset("fancy"))
 
-  .get("/hello", () => ({ message: "hello" }))
+  .use(vehiclesRouter)
 
-  .onError((err) => {
-    console.log(err);
-    console.log(err.error);
-  })
+  .get("/hello", () => ({ message: "hello" }))
   .listen(3000);
 
 export type App = typeof api;

@@ -20,7 +20,7 @@ const router = createRouter({
   },
   defaultNotFoundComponent: () => {
     return (
-      <div className="h-[100vh] w-[100vw] flex flex-col items-center justify-center">
+      <div className="h-full w-full flex flex-col items-center justify-center">
         <p>404 Not found</p>
       </div>
     );

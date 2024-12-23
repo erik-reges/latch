@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, redirect, useSearch } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +17,18 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { isAuthenticated } from "@/lib/auth";
 export const Route = createFileRoute("/signup")({
+  beforeLoad: async ({ location }) => {
+    if (await isAuthenticated()) {
+      throw redirect({
+        to: "/",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
   component: SignUp,
 });
 
@@ -28,9 +39,9 @@ const SignUpSchema = t.Object({
     description: "Enter your email address",
   }),
   password: t.String({
-    minLength: 8,
-    error: "Password must be at least 8 characters",
-    description: "Enter your password (minimum 8 characters)",
+    minLength: 4,
+    error: "Password must be at least 4 characters",
+    description: "Enter your password (minimum 4 characters)",
   }),
 });
 
@@ -40,15 +51,6 @@ export function SignUp({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  const session = useSession();
-
-  console.log(session.data?.user);
-  if (session.data?.user) {
-    navigate({
-      to: "/",
-    });
-  }
 
   const {
     register,
@@ -104,7 +106,7 @@ export function SignUp({}) {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <Card className=" max-w-md w-full bg-stone-900">
+      <Card className=" max-w-md w-full ">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Create an account
