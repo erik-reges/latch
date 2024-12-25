@@ -30,8 +30,6 @@ export function AddVehicleDialog() {
       setOpen(false);
     }
 
-    console.log(createdVehicle, error);
-
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["vehicles-all"] }),
       queryClient.invalidateQueries({ queryKey: ["vehicles-paginated"] }),

@@ -19,6 +19,7 @@ import {
 import { revokeSession, signOut, type User } from "@/lib/auth";
 import { useNavigate } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { useAuth } from "@/stores/auth-store";
 
 interface NavUserProps {
   user: User;
@@ -28,6 +29,8 @@ interface NavUserProps {
 export function NavUser({ user, token }: NavUserProps) {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
+  const { clearAuth } = useAuth();
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -87,7 +90,7 @@ export function NavUser({ user, token }: NavUserProps) {
                   fetchOptions: {
                     onSuccess: () => {
                       revokeSession({ token: token });
-
+                      clearAuth();
                       navigate({
                         to: "/signin",
                         search: {

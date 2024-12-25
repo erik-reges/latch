@@ -107,10 +107,10 @@ function AccountRoute() {
     onProfileSubmit: (data) => profileMutation.mutateAsync(data),
   });
   return (
-    <div className="w-full h-full flex justify-center py-40 ">
-      <div className="container max-w-2xl">
+    <div className=" h-full flex justify-center py-40 ">
+      <div className="container max-w-xl">
         <Card>
-          <CardHeader className="">
+          <CardHeader className="max-w-md mx-auto">
             <CardTitle>
               <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
                 Account Settings
@@ -134,8 +134,10 @@ function AccountRoute() {
                   </TabsTrigger>
                 </TabsList>
               </div>
-
-              <TabsContent value="profile" className="space-y-4">
+              <TabsContent
+                value="profile"
+                className="space-y-4 max-w-md mx-auto"
+              >
                 <Form {...profileForm}>
                   <form onSubmit={handleProfileSubmit} className="space-y-4">
                     <FormField
@@ -174,7 +176,10 @@ function AccountRoute() {
                 </Form>
               </TabsContent>
 
-              <TabsContent value="password" className="space-y-4">
+              <TabsContent
+                value="password"
+                className="space-y-4 max-w-md mx-auto"
+              >
                 <Form {...passwordForm}>
                   <form onSubmit={handlePasswordSubmit} className="space-y-4">
                     <FormField
@@ -216,9 +221,13 @@ function AccountRoute() {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" disabled={passwordMutation.isPending}>
+                    <Button
+                      type="submit"
+                      className="mt-4"
+                      disabled={passwordMutation.isPending}
+                    >
                       {passwordMutation.isPending && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2  h-4 w-4 animate-spin" />
                       )}
                       Update Password
                     </Button>

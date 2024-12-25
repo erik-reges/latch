@@ -34,7 +34,6 @@ interface AuthState {
     password: string,
     rememberMe?: boolean,
   ) => Promise<void>;
-  logout: (email: string, token: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
 
   // User management
@@ -105,25 +104,6 @@ export const useAuth = create<AuthState>()(
                 isAuthenticated: true,
               });
             }
-          } catch (error) {
-            set({ error: (error as Error).message });
-            throw error;
-          } finally {
-            set({ isLoading: false });
-          }
-        },
-
-        logout: async (email: string, token: string) => {
-          set({ isLoading: true, error: null });
-          try {
-            await signOut({
-              fetchOptions: {
-                onSuccess: async () => {
-                  await revokeSession({ token });
-                  get().clearAuth();
-                },
-              },
-            });
           } catch (error) {
             set({ error: (error as Error).message });
             throw error;
@@ -241,7 +221,6 @@ export const useAuthActions = () => {
   const store = useAuth();
   return {
     login: store.login,
-    logout: store.logout,
     register: store.register,
     updateEmail: store.updateUserEmail,
     updatePassword: store.updateUserPassword,

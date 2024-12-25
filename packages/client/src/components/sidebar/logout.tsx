@@ -1,4 +1,4 @@
-import { getSession, revokeSession, signOut, useSession } from "@/lib/auth";
+import { signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/stores/auth-store";
@@ -10,7 +10,7 @@ interface LogoutProps {
 
 export function Logout({ email, token }: LogoutProps) {
   const navigate = useNavigate();
-  const { logout, clearAuth } = useAuth();
+  const { clearAuth } = useAuth();
 
   return (
     <Button

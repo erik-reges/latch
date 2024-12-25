@@ -1,6 +1,7 @@
 import {
   Outlet,
   createRootRouteWithContext,
+  useLocation,
   useParams,
   useRouter,
 } from "@tanstack/react-router";
