@@ -21,8 +21,6 @@ export function Logout({ email, token }: LogoutProps) {
             onSuccess: () => {
               clearAuth();
 
-              logout(email, token);
-
               navigate({
                 to: "/signin",
                 search: {

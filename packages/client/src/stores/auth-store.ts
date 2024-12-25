@@ -144,23 +144,6 @@ export const useAuth = create<AuthState>()(
             if (result.error) {
               throw new Error(result.error.message || "Failed to sign up");
             }
-
-            if (result.data) {
-              const userData = {
-                id: result.data.id,
-                email: result.data.email,
-                name: result.data.name,
-                emailVerified: result.data.emailVerified,
-                image: result.data.image,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              };
-
-              set({
-                user: userData,
-                isAuthenticated: true,
-              });
-            }
           } catch (error) {
             set({ error: (error as Error).message });
             throw error;

@@ -17,7 +17,6 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { isAuthenticated } from "@/lib/auth";
 import { useAuth } from "@/stores/auth-store";
 export const Route = createFileRoute("/signup")({
   component: SignUp,
@@ -42,9 +41,9 @@ export function SignUp({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated: isAuth } = useAuth();
 
-  if (isAuthenticated) {
+  if (isAuth) {
     navigate({
       to: "/",
     });

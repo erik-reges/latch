@@ -3,9 +3,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/sidebar/app-header";
 import { Separator } from "@/components/ui/separator";
-import { useAuth, useSession } from "@/stores/auth-store";
+import { useAuth } from "@/stores/auth-store";
 
-import { useEffect } from "react";
 import { getSession } from "@/lib/auth";
 
 export const Route = createFileRoute("/_app")({

@@ -1,11 +1,9 @@
 import Elysia, { t } from "elysia";
 import { db } from "@latch/db";
 import { vehicles, type Vehicle } from "@latch/db/drizzle/auth-schema";
-
 import { createId } from "@paralleldrive/cuid2";
 import { asc, desc, eq, gt, sql } from "drizzle-orm";
-
-import { createInsertSchema, createSelectSchema } from "drizzle-typebox";
+import { userMiddleware } from "@latch/api/lib/middleware";
 
 export const vehicleSchema = t.Object({
   name: t.String(),
@@ -33,9 +31,10 @@ const updateVehicleSchema = t.Partial(vehicleSchema);
 export const vehiclesRouter = new Elysia({
   prefix: "/vehicles",
 })
-  .get("/count", async () => {
+  .use(userMiddleware)
+  .get("/count", async ({}) => {
     const count = await db
-      .select({ count: sql<number>`count(*)` })
+      .select({ count: sql`cast(count(*) as integer)` })
       .from(vehicles)
       .then((res) => res[0].count);
 
@@ -94,11 +93,7 @@ export const vehiclesRouter = new Elysia({
     },
   )
   .get("", async () => {
-    return await db
-      .select()
-      .from(vehicles)
-      .orderBy(asc(vehicles.id))
-      .limit(500);
+    return await db.select().from(vehicles).orderBy(asc(vehicles.id)).limit(10);
   })
   .get(
     "/:id",

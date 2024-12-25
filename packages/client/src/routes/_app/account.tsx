@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { isAuthenticated, changeEmail, changePassword } from "@/lib/auth";
+import { changePassword } from "@/lib/auth";
 import { useAccountForms } from "@/hooks/use-account-form";
 import { Type } from "@sinclair/typebox";
 

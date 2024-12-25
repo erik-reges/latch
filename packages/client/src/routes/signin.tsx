@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { isAuthenticated, signIn, useSession } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/stores/auth-store";
@@ -54,9 +54,11 @@ export function SignIn({}) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  if (isAuthenticated) {
-    navigate({ to: "/" });
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: "/" });
+    }
+  }, [isAuthenticated, navigate]);
 
   const {
     register,

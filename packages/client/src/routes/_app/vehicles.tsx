@@ -91,6 +91,9 @@ function VehiclesRoute() {
       const sortField = sorting[0]?.id ?? "yearManufactured"; // Default sort field
       const sortOrder = sorting[0]?.desc ? "desc" : "asc";
 
+      const queryKey = ["vehicles-paginated", page, sorting];
+      const existingData = qc.getQueryData(queryKey);
+
       const { data } = await api.vehicles.page.get({
         query: {
           cursor: (page - 1).toString(),
@@ -121,36 +124,62 @@ function VehiclesRoute() {
     });
   };
 
+  // const prefetchNextPage = () => {
+  //   const nextPage = page;
+  //   if (nextPage <= totalPages) {
+  //     const queryKey = [
+  //       "vehicles-paginated",
+  //       nextPage,
+  //       sorting[0] ?? { id: "yearManufactured", desc: true },
+  //     ];
+
+  //     if (!qc.getQueryData(queryKey)) {
+  //       qc.prefetchQuery({
+  //         queryKey,
+  //         queryFn: async () => {
+  //           const { data } = await api.vehicles.page.get({
+  //             query: {
+  //               cursor: nextPage.toString(),
+  //               sortField: sorting[0]?.id ?? "yearManufactured",
+  //               sortOrder: sorting[0]?.desc ? "desc" : "asc",
+  //             },
+  //           });
+  //           return data;
+  //         },
+  //         staleTime: 30000,
+  //       });
+  //     }
+  //   }
+  // };
+
   const handlePageChange = (newPage: number) => {
     updatePage(newPage);
 
-    // only prefetch the next page if we haven't already
-    const nextPage = newPage + 1;
-    if (nextPage <= totalPages) {
-      const queryKey = [
-        "vehicles-paginated",
-        nextPage,
-        sorting[0] ?? { id: "yearManufactured", desc: true },
-      ];
+    // const nextPage = newPage + 1;
+    // if (nextPage <= totalPages) {
+    //   const queryKey = [
+    //     "vehicles-paginated",
+    //     nextPage,
+    //     sorting[0] ?? { id: "yearManufactured", desc: true },
+    //   ];
 
-      // check if we already have this data in the cache
-      if (!qc.getQueryData(queryKey)) {
-        qc.prefetchQuery({
-          queryKey,
-          queryFn: async () => {
-            const { data } = await api.vehicles.page.get({
-              query: {
-                cursor: nextPage.toString(),
-                sortField: sorting[0]?.id ?? "yearManufactured",
-                sortOrder: sorting[0]?.desc ? "desc" : "asc",
-              },
-            });
-            return data;
-          },
-          staleTime: 30000,
-        });
-      }
-    }
+    //   if (!qc.getQueryData(queryKey)) {
+    //     qc.prefetchQuery({
+    //       queryKey,
+    //       queryFn: async () => {
+    //         const { data } = await api.vehicles.page.get({
+    //           query: {
+    //             cursor: nextPage.toString(),
+    //             sortField: sorting[0]?.id ?? "yearManufactured",
+    //             sortOrder: sorting[0]?.desc ? "desc" : "asc",
+    //           },
+    //         });
+    //         return data;
+    //       },
+    //       staleTime: 30000,
+    //     });
+    //   }
+    // }
   };
 
   const vehicles = useMemo(() => {
@@ -311,8 +340,6 @@ function VehiclesRoute() {
         <Pagination className=" p-2">
           <PaginationContent className="flex items-center justify-between gap-4">
             <PaginationItem className="w-24 cursor-pointer">
-              {" "}
-              {/* Fixed width for prev/next buttons */}
               <PaginationPrevious
                 className="w-full"
                 onClick={() => handlePageChange(page - 1)}
@@ -320,8 +347,6 @@ function VehiclesRoute() {
             </PaginationItem>
 
             <div className="flex items-center gap-2 min-w-[275px]  justify-between">
-              {" "}
-              {/* Container for page numbers */}
               <PaginationItem className="cursor-pointer p-2">
                 <PaginationLink
                   onClick={() => handlePageChange(1)}
@@ -365,11 +390,11 @@ function VehiclesRoute() {
             </div>
 
             <PaginationItem className="w-20">
-              {" "}
               <Button
                 variant="ghost"
                 className="gap-1 pr-2.5 w-full cursor-pointer"
                 onClick={() => handlePageChange(page + 1)}
+                // onMouseEnter={prefetchNextPage}
                 disabled={page === totalPages}
                 size="default"
               >
