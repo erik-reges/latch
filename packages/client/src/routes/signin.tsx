@@ -18,6 +18,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/stores/auth-store";
 
 const SignInSchema = Type.Object({
   email: Type.String({
@@ -34,19 +35,13 @@ const SignInSchema = Type.Object({
 
 type SignInFormData = Static<typeof SignInSchema>;
 
+type SearchParams = {
+  email?: string;
+};
+
 export const Route = createFileRoute("/signin")({
-  beforeLoad: async ({ location }) => {
-    if (await isAuthenticated()) {
-      throw redirect({
-        to: "/",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
-  validateSearch: (search: Record<string, unknown>) => {
-    const email = typeof search.email === "string" ? search.email : undefined;
+  validateSearch: (search?: SearchParams) => {
+    const email = typeof search?.email === "string" ? search?.email : undefined;
     return { email };
   },
   component: SignIn,
@@ -57,6 +52,11 @@ export function SignIn({}) {
   const [errormsg, setError] = useState<string | null>(null);
   const { email } = Route.useSearch();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    navigate({ to: "/" });
+  }
 
   const {
     register,
@@ -89,7 +89,13 @@ export function SignIn({}) {
 
       reset();
       navigate({
-        to: "/",
+        to: "/vehicles",
+        search: {
+          page: 1,
+          pageSize: 10,
+          sortField: "yearManufactured",
+          sortOrder: "desc",
+        },
       });
     } catch (err) {
       const errorMessage =

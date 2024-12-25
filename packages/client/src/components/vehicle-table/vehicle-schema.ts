@@ -27,7 +27,7 @@ export const vehicleSchema = Type.Object({
   }),
   yearManufactured: Type.Number({
     minimum: 1900,
-    maximum: new Date().getFullYear(),
+    maximum: new Date().getFullYear() + 5,
     description: "Year the vehicle was manufactured",
   }),
   status: Type.Enum(

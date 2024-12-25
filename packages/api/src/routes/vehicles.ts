@@ -47,15 +47,29 @@ export const vehiclesRouter = new Elysia({
       const page = Number(query.cursor) || 0;
       const pageSize = 10;
       const offset = page * pageSize;
-      const sortField = (query.sortField as keyof Vehicle) || "id";
-      const sortOrder = query.sortOrder === "desc" ? desc : asc;
+      const sortField = query.sortField
+        ? (query.sortField as keyof Vehicle)
+        : "yearManufactured";
+
+      // Build the order by clause
+      let orderByClause;
+      if (sortField === "yearManufactured") {
+        orderByClause = sql`${vehicles[sortField]}::int ${
+          query.sortOrder === "desc" ? sql`DESC` : sql`ASC`
+        }`;
+      } else {
+        orderByClause =
+          query.sortOrder === "desc"
+            ? desc(vehicles[sortField])
+            : asc(vehicles[sortField]);
+      }
 
       const res = await db
         .select()
         .from(vehicles)
         .offset(offset)
         .limit(pageSize)
-        .orderBy(sortOrder(vehicles[sortField]));
+        .orderBy(orderByClause);
 
       const totalCount = await db
         .select({ count: sql<number>`count(*)` })

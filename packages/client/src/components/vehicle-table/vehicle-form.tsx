@@ -26,9 +26,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { vehicleSchema, type VehicleFormValues } from "./vehicle-schema";
+import { type VehicleFormValues } from "./vehicle-schema";
 import { useVehicleForm } from "@/hooks/use-vehicle-form";
-import type { Vehicle } from "@latch/db/drizzle/auth-schema";
 
 interface VehicleFormProps {
   onSubmit: (data: VehicleFormValues) => Promise<void>;

@@ -65,34 +65,9 @@ export type ProfileFormValues = typeof profileSchema.static;
 
 export const Route = createFileRoute("/_app/account")({
   component: AccountRoute,
-  beforeLoad: async ({ location }) => {
-    if (!(await isAuthenticated())) {
-      throw redirect({
-        to: "/signup",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
 });
 
 function AccountRoute() {
-  const emailMutation = useMutation({
-    mutationFn: async (data: EmailFormValues) => {
-      await changeEmail({
-        newEmail: data.email,
-      });
-    },
-    onSuccess: () => {
-      toast.success("Email updated successfully");
-      emailForm.reset();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
   const passwordMutation = useMutation({
     mutationFn: async (data: PasswordFormValues) => {
       await changePassword({
@@ -123,167 +98,137 @@ function AccountRoute() {
   });
 
   const {
-    emailForm,
     passwordForm,
     profileForm,
-    handleEmailSubmit,
     handlePasswordSubmit,
     handleProfileSubmit,
   } = useAccountForms({
-    onEmailSubmit: (data) => emailMutation.mutateAsync(data),
     onPasswordSubmit: (data) => passwordMutation.mutateAsync(data),
     onProfileSubmit: (data) => profileMutation.mutateAsync(data),
   });
-
   return (
-    <div className="container max-w-2xl py-10">
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Settings</CardTitle>
-          <CardDescription>
-            Manage your account settings and set your preferences.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="profile" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="email">Email</TabsTrigger>
-              <TabsTrigger value="password">Password</TabsTrigger>
-            </TabsList>
+    <div className="w-full h-full flex justify-center py-40 ">
+      <div className="container max-w-2xl">
+        <Card>
+          <CardHeader className="">
+            <CardTitle>
+              <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
+                Account Settings
+              </h2>
+            </CardTitle>
+            <CardDescription>
+              <p className="leading-7 [&:not(:first-child)]:mt-6">
+                Manage your account settings and set your preferences.
+              </p>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="profile">
+              <div className="flex justify-center w-full pb-4">
+                <TabsList className="w-3/4">
+                  <TabsTrigger value="profile" className="w-full p-1">
+                    Profile
+                  </TabsTrigger>
+                  <TabsTrigger value="password" className="w-full p-1">
+                    Password
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-            <TabsContent value="profile" className="space-y-4">
-              <Form {...profileForm}>
-                <form onSubmit={handleProfileSubmit} className="space-y-4">
-                  <FormField
-                    control={profileForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={profileForm.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" disabled={profileMutation.isPending}>
-                    {profileMutation.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Update Profile
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
+              <TabsContent value="profile" className="space-y-4">
+                <Form {...profileForm}>
+                  <form onSubmit={handleProfileSubmit} className="space-y-4">
+                    <FormField
+                      control={profileForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={profileForm.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" disabled={profileMutation.isPending}>
+                      {profileMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Update Profile
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
 
-            <TabsContent value="email" className="space-y-4">
-              <Form {...emailForm}>
-                <form onSubmit={handleEmailSubmit} className="space-y-4">
-                  <FormField
-                    control={emailForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>New Email</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="email" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={emailForm.control}
-                    name="confirmEmail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm New Email</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="email" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" disabled={emailMutation.isPending}>
-                    {emailMutation.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Update Email
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
-
-            <TabsContent value="password" className="space-y-4">
-              <Form {...passwordForm}>
-                <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                  <FormField
-                    control={passwordForm.control}
-                    name="currentPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Current Password</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="password" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={passwordForm.control}
-                    name="newPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>New Password</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="password" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={passwordForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm New Password</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="password" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" disabled={passwordMutation.isPending}>
-                    {passwordMutation.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Update Password
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+              <TabsContent value="password" className="space-y-4">
+                <Form {...passwordForm}>
+                  <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                    <FormField
+                      control={passwordForm.control}
+                      name="currentPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Current Password</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="password" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={passwordForm.control}
+                      name="newPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>New Password</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="password" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={passwordForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm New Password</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="password" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" disabled={passwordMutation.isPending}>
+                      {passwordMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Update Password
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

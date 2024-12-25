@@ -6,7 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/dark-mode/theme-provider";
 import { treatyClient } from "../../api/lib/eden";
 
-export const api = treatyClient();
+export const api = treatyClient(import.meta.env.VITE_API_URL);
 export type API = typeof api;
 export const qc = new QueryClient();
 
@@ -41,7 +41,7 @@ if (!rootElement.innerHTML) {
 
   root.render(
     <QueryClientProvider client={qc}>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="blue" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
       </ThemeProvider>
     </QueryClientProvider>,

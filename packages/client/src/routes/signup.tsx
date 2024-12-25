@@ -18,17 +18,8 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { isAuthenticated } from "@/lib/auth";
+import { useAuth } from "@/stores/auth-store";
 export const Route = createFileRoute("/signup")({
-  beforeLoad: async ({ location }) => {
-    if (await isAuthenticated()) {
-      throw redirect({
-        to: "/",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
   component: SignUp,
 });
 
@@ -51,6 +42,13 @@ export function SignUp({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    navigate({
+      to: "/",
+    });
+  }
 
   const {
     register,

@@ -15,8 +15,8 @@ import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app/index'
+import { Route as AppVehiclesImport } from './routes/_app/vehicles'
 import { Route as AppAccountImport } from './routes/_app/account'
-import { Route as AppVehiclesTrainsImport } from './routes/_app/vehicles/trains'
 
 // Create/Update Routes
 
@@ -43,15 +43,15 @@ const AppIndexRoute = AppIndexImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
-const AppAccountRoute = AppAccountImport.update({
-  id: '/account',
-  path: '/account',
+const AppVehiclesRoute = AppVehiclesImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
   getParentRoute: () => AppRoute,
 } as any)
 
-const AppVehiclesTrainsRoute = AppVehiclesTrainsImport.update({
-  id: '/vehicles/trains',
-  path: '/vehicles/trains',
+const AppAccountRoute = AppAccountImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -87,18 +87,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountImport
       parentRoute: typeof AppImport
     }
+    '/_app/vehicles': {
+      id: '/_app/vehicles'
+      path: '/vehicles'
+      fullPath: '/vehicles'
+      preLoaderRoute: typeof AppVehiclesImport
+      parentRoute: typeof AppImport
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/vehicles/trains': {
-      id: '/_app/vehicles/trains'
-      path: '/vehicles/trains'
-      fullPath: '/vehicles/trains'
-      preLoaderRoute: typeof AppVehiclesTrainsImport
       parentRoute: typeof AppImport
     }
   }
@@ -108,14 +108,14 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAccountRoute: typeof AppAccountRoute
+  AppVehiclesRoute: typeof AppVehiclesRoute
   AppIndexRoute: typeof AppIndexRoute
-  AppVehiclesTrainsRoute: typeof AppVehiclesTrainsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAccountRoute: AppAccountRoute,
+  AppVehiclesRoute: AppVehiclesRoute,
   AppIndexRoute: AppIndexRoute,
-  AppVehiclesTrainsRoute: AppVehiclesTrainsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -125,16 +125,16 @@ export interface FileRoutesByFullPath {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/account': typeof AppAccountRoute
+  '/vehicles': typeof AppVehiclesRoute
   '/': typeof AppIndexRoute
-  '/vehicles/trains': typeof AppVehiclesTrainsRoute
 }
 
 export interface FileRoutesByTo {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/account': typeof AppAccountRoute
+  '/vehicles': typeof AppVehiclesRoute
   '/': typeof AppIndexRoute
-  '/vehicles/trains': typeof AppVehiclesTrainsRoute
 }
 
 export interface FileRoutesById {
@@ -143,23 +143,23 @@ export interface FileRoutesById {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/_app/account': typeof AppAccountRoute
+  '/_app/vehicles': typeof AppVehiclesRoute
   '/_app/': typeof AppIndexRoute
-  '/_app/vehicles/trains': typeof AppVehiclesTrainsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/signin' | '/signup' | '/account' | '/' | '/vehicles/trains'
+  fullPaths: '' | '/signin' | '/signup' | '/account' | '/vehicles' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/signin' | '/signup' | '/account' | '/' | '/vehicles/trains'
+  to: '/signin' | '/signup' | '/account' | '/vehicles' | '/'
   id:
     | '__root__'
     | '/_app'
     | '/signin'
     | '/signup'
     | '/_app/account'
+    | '/_app/vehicles'
     | '/_app/'
-    | '/_app/vehicles/trains'
   fileRoutesById: FileRoutesById
 }
 
@@ -194,8 +194,8 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/account",
-        "/_app/",
-        "/_app/vehicles/trains"
+        "/_app/vehicles",
+        "/_app/"
       ]
     },
     "/signin": {
@@ -208,12 +208,12 @@ export const routeTree = rootRoute
       "filePath": "_app/account.tsx",
       "parent": "/_app"
     },
-    "/_app/": {
-      "filePath": "_app/index.tsx",
+    "/_app/vehicles": {
+      "filePath": "_app/vehicles.tsx",
       "parent": "/_app"
     },
-    "/_app/vehicles/trains": {
-      "filePath": "_app/vehicles/trains.tsx",
+    "/_app/": {
+      "filePath": "_app/index.tsx",
       "parent": "/_app"
     }
   }

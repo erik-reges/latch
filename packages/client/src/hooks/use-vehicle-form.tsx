@@ -20,7 +20,7 @@ export function useVehicleForm({
     defaultValues: {
       status: "active",
       maxSpeed: 0,
-      yearManufactured: new Date().getFullYear(),
+      yearManufactured: new Date().getFullYear() + 1,
       lastMaintenanceDate: null,
       nextMaintenanceDate: null,
       ...defaultValues,

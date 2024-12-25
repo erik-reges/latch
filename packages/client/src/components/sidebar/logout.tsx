@@ -1,11 +1,16 @@
 import { getSession, revokeSession, signOut, useSession } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/stores/auth-store";
 
-export function Logout() {
+interface LogoutProps {
+  email: string;
+  token: string;
+}
+
+export function Logout({ email, token }: LogoutProps) {
   const navigate = useNavigate();
-
-  const { data: session } = useSession();
+  const { logout, clearAuth } = useAuth();
 
   return (
     <Button
@@ -14,12 +19,14 @@ export function Logout() {
         signOut({
           fetchOptions: {
             onSuccess: () => {
-              revokeSession({ token: session?.session.token ?? "" });
+              clearAuth();
+
+              logout(email, token);
 
               navigate({
                 to: "/signin",
                 search: {
-                  email: session?.user.email,
+                  email: email,
                 },
               });
             },

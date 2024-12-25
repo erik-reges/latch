@@ -11,22 +11,27 @@ import {
   BreadcrumbLink,
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useMatches } from "@tanstack/react-router";
+import { useMatches, useLocation } from "@tanstack/react-router";
 
-export function AppHeader() {
+export function AppHeader({ email, token }: { email: string; token: string }) {
   const matches = useMatches();
+  const location = useLocation();
+
   const getRouteLabel = (routeId: string) => {
-    // Extract the last segment of the route ID
-    const segment = routeId.split("/").pop() || "";
+    // Remove leading slashes and _app prefix
+    const cleanPath = routeId
+      .replace(/^\/|^_app\//, "") // Remove leading slash and _app/
+      .replace(/^__root__$/, "") // Remove root route identifier
+      .replace(/^\/_app$/, "") // Remove layout route identifier
+      .replace(/^_app\//, ""); // Remove any remaining _app/ prefix
 
     const routeLabels: Record<string, string> = {
-      __root__: "Home",
+      "": "Home",
       vehicles: "Vehicles",
-      settings: "Settings",
-      "": "Home", // Handle empty segment
+      account: "Account Settings",
     };
 
-    return routeLabels[segment] || formatPathSegment(segment);
+    return routeLabels[cleanPath] || formatPathSegment(cleanPath);
   };
 
   const formatPathSegment = (segment: string) => {
@@ -37,15 +42,11 @@ export function AppHeader() {
   };
 
   const getBreadcrumbs = () => {
-    const pathSegments = matches
-      // Filter out the root route and layout routes
+    // Filter and transform matches into breadcrumbs
+    const breadcrumbs = matches
       .filter((match) => {
-        const routeId = match.routeId;
-        return (
-          routeId !== "__root__" &&
-          !routeId.includes("/_app") && // Update to match exact layout route
-          routeId !== "/_app"
-        );
+        // Keep only relevant routes (exclude root and layout-only routes)
+        return match.routeId !== "__root__" && match.pathname !== "/";
       })
       .map((match) => ({
         label: getRouteLabel(match.routeId),
@@ -53,15 +54,15 @@ export function AppHeader() {
         isLast: false,
       }));
 
-    if (pathSegments.length > 0) {
-      pathSegments[pathSegments.length - 1].isLast = true;
+    // Mark the last item
+    if (breadcrumbs.length > 0) {
+      breadcrumbs[breadcrumbs.length - 1].isLast = true;
     }
 
-    return pathSegments;
+    return breadcrumbs;
   };
-  const breadcrumbs = getBreadcrumbs();
 
-  // console.log(breadcrumbs);
+  const breadcrumbs = getBreadcrumbs();
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -70,43 +71,34 @@ export function AppHeader() {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            {breadcrumbs.length === 0 ? (
-              <>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">Latch</BreadcrumbLink>
+            {/* Always show Latch as first item */}
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="/">Latch</BreadcrumbLink>
+            </BreadcrumbItem>
+
+            {/* Show separators and additional breadcrumbs */}
+            {breadcrumbs.map((crumb, index) => (
+              <React.Fragment key={crumb.path}>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  {crumb.isLast ? (
+                    <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink href={crumb.path}>
+                      {crumb.label}
+                    </BreadcrumbLink>
+                  )}
                 </BreadcrumbItem>
+              </React.Fragment>
+            ))}
+
+            {/* If we're at root and no other breadcrumbs, show Home */}
+            {breadcrumbs.length === 0 && (
+              <>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
                   <BreadcrumbPage>Home</BreadcrumbPage>
                 </BreadcrumbItem>
-              </>
-            ) : (
-              <>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">Latch</BreadcrumbLink>
-                </BreadcrumbItem>
-              </>
-            )}
-
-            {breadcrumbs.length > 0 && (
-              <>
-                <BreadcrumbSeparator className="hidden md:block" />
-                {breadcrumbs.map((crumb, index) => (
-                  <React.Fragment key={crumb.path}>
-                    {index > 0 && (
-                      <BreadcrumbSeparator className="hidden md:block" />
-                    )}
-                    <BreadcrumbItem>
-                      {crumb.isLast ? (
-                        <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                      ) : (
-                        <BreadcrumbLink href={crumb.path}>
-                          {crumb.label}
-                        </BreadcrumbLink>
-                      )}
-                    </BreadcrumbItem>
-                  </React.Fragment>
-                ))}
               </>
             )}
           </BreadcrumbList>
@@ -115,8 +107,7 @@ export function AppHeader() {
       <div className="ml-auto flex items-center gap-4 pr-4">
         <ModeToggle />
         <Separator orientation="vertical" className=" h-4" />
-
-        <Logout />
+        <Logout email={email} token={token} />
       </div>
     </header>
   );

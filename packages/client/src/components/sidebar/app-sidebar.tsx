@@ -35,18 +35,10 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { type Session, type User } from "@/lib/auth";
+
 const vehicleItems = [
-  // {
-  //   title: "Cars",
-  //   url: "/vehicles/cars",
-  //   icon: Car,
-  // },
-  // {
-  //   title: "Trucks",
-  //   url: "/vehicles/trucks",
-  //   icon: Truck,
-  // },
   {
     title: "Trains",
     url: "/vehicles/trains",
@@ -55,21 +47,6 @@ const vehicleItems = [
 ];
 
 const items = [
-  // {
-  //   title: "Home",
-  //   url: "/",
-  //   icon: Home,
-  // },
-  // {
-  //   title: "Calendar",
-  //   url: "#",
-  //   icon: Calendar,
-  // },
-  // {
-  //   title: "Search",
-  //   url: "#",
-  //   icon: Search,
-  // },
   {
     title: "Settings",
     url: "/account",
@@ -94,15 +71,65 @@ const apps = [
     plan: "Some other stuff",
   },
 ];
-export function AppSidebar() {
+
+interface AppSidebarProps {
+  user: User;
+  session: Session;
+}
+
+export function AppSidebar({ user, session }: AppSidebarProps) {
   const [isOpen, setIsOpen] = useState(true);
+
+  const vehicleSubMenu = useMemo(
+    () => (
+      <SidebarMenuSub>
+        {vehicleItems.map((item) => (
+          <SidebarMenuSubItem className="mx-0" key={item.title}>
+            <Link
+              href={item.url}
+              className="flex items-center gap-2 w-full px-2 py-2
+              text-sm transition-colors duration-200
+              hover:bg-accent hover:text-accent-foreground
+              rounded-md"
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuSubItem>
+        ))}
+      </SidebarMenuSub>
+    ),
+    [],
+  );
+
+  const menuItems = useMemo(
+    () =>
+      items.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <Link href={item.url}>
+              <item.icon />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )),
+    [],
+  );
+
+  const chevronAnimation = useMemo(
+    () => ({
+      rotate: isOpen ? 90 : 0,
+    }),
+    [isOpen],
+  );
+
   return (
     <Sidebar>
       <AppSwitcher teams={apps} />
 
       <SidebarContent>
         <SidebarGroup>
-          {/* <SidebarGroupLabel>App</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -114,7 +141,15 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* Vehicles Collapsible */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href={"/vehicles"}>
+                    <Home />
+                    <span>Vehicles</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               <Collapsible open={isOpen} onOpenChange={setIsOpen} className="">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -123,7 +158,7 @@ export function AppSidebar() {
                       <span>Vehicles</span>
                       <motion.div
                         className="ml-auto"
-                        animate={{ rotate: isOpen ? 90 : 0 }}
+                        animate={chevronAnimation}
                         transition={{ duration: 0.1, ease: "easeInOut" }}
                       >
                         <ChevronRight className="h-4 w-4" />
@@ -136,44 +171,20 @@ export function AppSidebar() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.0 }}
                     >
-                      <SidebarMenuSub>
-                        {vehicleItems.map((item) => (
-                          <SidebarMenuSubItem className="mx-0" key={item.title}>
-                            <Link
-                              href={item.url}
-                              className="flex items-center gap-2 w-full px-2 py-2
-                                text-sm transition-colors duration-200
-                                hover:bg-accent hover:text-accent-foreground
-                                rounded-md"
-                            >
-                              <item.icon className="h-4 w-4" />
-                              <span>{item.title}</span>
-                            </Link>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
+                      {vehicleSubMenu}
                     </motion.div>
                   </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
 
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser />
+        <NavUser user={user} token={session.token} />
       </SidebarFooter>
     </Sidebar>
   );

@@ -5,8 +5,10 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import type { QueryClient } from "@tanstack/react-query";
-import type { API } from "../lib/api";
+import type { API } from "@/main";
 
 export const Route = createRootRouteWithContext<{
   api: API;
@@ -16,15 +18,12 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
-  const params = useParams({ from: "__root__" }); // i.e { projectId: "123" }
-  const router = useRouter();
-
   return (
     <>
       <main className="flex-1">
         <Outlet />
       </main>
-      {/* <TanStackRouterDevtools position="top-left" /> */}
+      <ReactQueryDevtools />
     </>
   );
 }

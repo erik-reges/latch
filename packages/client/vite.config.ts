@@ -5,6 +5,8 @@ import path from "path";
 
 export default defineConfig({
   plugins: [TanStackRouterVite({}), react()],
+  envDir: "./.env",
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

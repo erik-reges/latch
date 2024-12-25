@@ -1,8 +1,8 @@
 import { treaty } from "@elysiajs/eden";
 import type { App } from "../src";
 
-export function treatyClient() {
-  return treaty<App>("http://localhost:3000", {
+export function treatyClient(url: string) {
+  return treaty<App>(url, {
     fetcher: (url, init) => {
       return fetch(url, {
         ...init,
