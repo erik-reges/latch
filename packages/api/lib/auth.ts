@@ -23,7 +23,12 @@ export const bAuth = betterAuth({
     enabled: true,
     autoSignIn: false,
   },
-  trustedOrigins: ["http://localhost:8080"],
+  trustedOrigins: [
+    "https://latch-falling-pond-1256.fly.dev",
+    "https://latch-falling-pond-1256.fly.dev/signin",
+    "http://localhost:8080",
+    "http://localhost:3000",
+  ],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),

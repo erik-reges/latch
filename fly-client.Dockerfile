@@ -15,15 +15,22 @@ COPY tsconfig.json .
 # Copy all packages
 COPY packages/db packages/db
 COPY packages/api packages/api
+COPY packages/client packages/client
+
+# Set the Vite API URL env var
+# ENV VITE_API_URL=https://latch-cold-cloud-2771.fly.dev
 
 # Install dependencies
 RUN bun install
 
 # Set working directory to API package
-WORKDIR /app/packages/api
+WORKDIR /app/packages/client
+
+# Build the client
+RUN bun run build
 
 # Expose the port your app runs on
 EXPOSE 3000
 
-# Start the application
-CMD ["bun", "run", "src/index.ts"]
+# Start the application in serve mode
+CMD ["bun", "run", "serve"]

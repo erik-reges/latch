@@ -15,7 +15,12 @@ export const api = new Elysia({ prefix: "/api" })
 
   .use(
     cors({
-      origin: ["http://localhost:8080", "http://localhost:8080/*"],
+      origin: [
+        "http://localhost:8080",
+        "http://localhost:8080/*",
+        "http://localhost:4173",
+        "https://latch-falling-pond-1256.fly.dev",
+      ],
     }),
   )
 

@@ -14,7 +14,7 @@ export const {
   updateUser,
   revokeSession,
 } = createAuthClient({
-  baseURL: "http://localhost:3000/api/auth",
+  baseURL: "https://latch-cold-cloud-2771.fly.dev/api/auth",
 });
 
 interface AuthState {

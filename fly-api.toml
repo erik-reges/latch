@@ -1,15 +1,12 @@
-# fly.toml app configuration file generated for api-green-morning-209 on 2024-12-25T18:16:14+01:00
+# fly.toml app configuration file generated for latch-falling-pond-1256 on 2024-12-25T23:52:20+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'api-green-morning-209'
+app = "latch-cold-cloud-2771"
 primary_region = 'arn'
 
 [build]
-
-[env]
-  PORT = '3000'
 
 [http_service]
   internal_port = 3000
