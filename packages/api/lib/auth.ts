@@ -11,8 +11,8 @@ import {
 import type { Context } from "elysia";
 
 export const bAuth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET!,
-  baseUrl: process.env.BETTER_AUTH_URL!,
+  // secret: process.env.BETTER_AUTH_SECRET!,
+  // baseUrl: process.env.API_URL!,
   schema: {
     user,
     session,
