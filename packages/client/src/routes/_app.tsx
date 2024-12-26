@@ -11,18 +11,25 @@ export const Route = createFileRoute("/_app")({
   component: LayoutComponent,
   loader: async () => {
     const { isAuthenticated, setAuth } = useAuth.getState();
+    console.log("Route loader - isAuthenticated:", isAuthenticated);
+
     if (!isAuthenticated) {
-      const { data } = await getSession();
-      if (data?.user && data?.session) {
-        setAuth(data.user, data.session);
-        return data;
+      const result = await getSession();
+      console.log("Route loader - session check result:", result);
+
+      if (result.data?.user && result.data?.session) {
+        console.log("Route loader - setting auth with:", result.data);
+        setAuth(result.data.user, result.data.session);
+        return result.data;
       } else {
+        console.log("Route loader - no session, redirecting to signin");
         throw redirect({
           to: "/signin",
           search: { email: undefined },
         });
       }
     }
+
     return {
       user: useAuth.getState().user,
       session: useAuth.getState().session,

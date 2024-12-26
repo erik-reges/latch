@@ -10,12 +10,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signUp, useAuth, useSession } from "@/lib/auth";
+import {
+  useAuth,
+  useAuthActions,
+  useAuthError,
+  useAuthLoading,
+} from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Type as t } from "@sinclair/typebox";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const Route = createFileRoute("/signup")({
@@ -38,16 +43,20 @@ const SignUpSchema = t.Object({
 type SignUpFormData = Static<typeof SignUpSchema>;
 
 export function SignUp({}) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated: isAuth } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (isAuth) {
-    navigate({
-      to: "/",
-    });
-  }
+  const { isAuthenticated } = useAuth();
+  const { register: registerUser, logout } = useAuthActions();
+  const error = useAuthError();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      logout().then(() => {
+        // Optional: Show some notification that user was logged out
+      });
+    }
+  }, [isAuthenticated, logout]);
 
   const {
     register,
@@ -64,21 +73,14 @@ export function SignUp({}) {
   const onSubmit = useCallback(
     async (data: SignUpFormData) => {
       try {
-        setIsSubmitting(true);
-        setError(null);
+        // First ensure we're logged out
+        await logout();
 
-        const result = await signUp.email({
-          email: data.email,
-          password: data.password,
-          name: data.email.split("@")[0],
-        });
-
-        if (result.error) {
-          console.log(result.error);
-          throw new Error(result?.error?.message || "Failed to sign up");
-        }
-
+        // Then proceed with registration
+        await registerUser(data.email, data.password, data.email.split("@")[0]);
         reset();
+
+        // Navigate to signin with email
         navigate({
           to: "/signin",
           search: {
@@ -86,19 +88,10 @@ export function SignUp({}) {
           },
         });
       } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : typeof err === "object" && err !== null && "message" in err
-              ? String(err.message)
-              : "An error occurred during sign up";
-
-        setError(errorMessage);
-      } finally {
-        setIsSubmitting(false);
+        console.error("Registration error:", err);
       }
     },
-    [reset, navigate],
+    [registerUser, navigate, reset, logout],
   );
 
   return (

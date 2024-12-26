@@ -11,7 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn, useAuth } from "@/lib/auth";
+import {
+  signIn,
+  useAuth,
+  useAuthActions,
+  useAuthError,
+  useAuthLoading,
+} from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
@@ -50,19 +56,22 @@ export function SignIn({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errormsg, setError] = useState<string | null>(null);
   const { email } = Route.useSearch();
-  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-
+  const { login, clearAuth } = useAuthActions();
+  const navigate = useNavigate();
+  const isLoading = useAuthLoading();
+  const error = useAuthError();
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
+      clearAuth();
+    } else {
       navigate({ to: "/" });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, clearAuth, navigate]);
 
   const {
     register,
     handleSubmit,
-
     formState: { errors },
     reset,
   } = useForm<SignInFormData>({
@@ -72,45 +81,26 @@ export function SignIn({}) {
     },
   });
 
-  const onSubmit = useCallback(async (data: SignInFormData) => {
-    try {
-      setIsSubmitting(true);
-      setError(null);
-
-      const result = await signIn.email({
-        email: data.email,
-        password: data.password,
-        rememberMe: true,
-      });
-
-      if (result.error) {
-        console.log(result.error);
-        throw new Error(result?.error?.message || "Failed to sign in");
+  const onSubmit = useCallback(
+    async (data: SignInFormData) => {
+      try {
+        await login(data.email, data.password, true);
+        reset();
+        navigate({
+          to: "/vehicles",
+          search: {
+            page: 1,
+            pageSize: 10,
+            sortField: "yearManufactured",
+            sortOrder: "desc",
+          },
+        });
+      } catch (err) {
+        console.error("Login error:", err);
       }
-
-      reset();
-      navigate({
-        to: "/vehicles",
-        search: {
-          page: 1,
-          pageSize: 10,
-          sortField: "yearManufactured",
-          sortOrder: "desc",
-        },
-      });
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : typeof err === "object" && err !== null && "message" in err
-            ? String(err.message)
-            : "An error occurred during sign in";
-
-      setError(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, []);
+    },
+    [login, navigate, reset],
+  );
 
   return (
     <div className="min-h-screen flex justify-center items-center">
@@ -120,10 +110,10 @@ export function SignIn({}) {
           <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
-          {errormsg && (
+          {error && (
             <div className="mb-4 p-3 rounded-md bg-destructive/15 text-destructive flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
-              <p className="text-sm">{errormsg}</p>
+              <p className="text-sm">{error}</p>
             </div>
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -181,7 +171,7 @@ export function SignIn({}) {
               disabled={isSubmitting}
               aria-disabled={isSubmitting}
             >
-              {isSubmitting ? (
+              {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span>Signing in...</span>

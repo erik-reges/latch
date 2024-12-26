@@ -33,7 +33,28 @@ export const {
   revokeSession,
 } = createAuthClient({
   baseURL: `${import.meta.env.VITE_API_URL}/api/auth`,
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
+
+export const isValidSession = (session: Session | null): boolean => {
+  if (!session) return false;
+  if (!session.token) return false;
+  return new Date(session.expiresAt) > new Date();
+};
+
+const debugSession = async () => {
+  try {
+    const result = await getSession();
+    console.log("Session check result:", result);
+    return result;
+  } catch (error) {
+    console.error("Session check error:", error);
+    return null;
+  }
+};
 
 interface AuthState {
   user: User | null;
@@ -54,6 +75,8 @@ interface AuthState {
   ) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
 
+  logout: () => Promise<void>;
+  verifyAndUpdateSession: () => Promise<void>;
   // User management
   updateUserEmail: (newEmail: string, password: string) => Promise<void>;
   updateUserPassword: (
@@ -101,11 +124,17 @@ export const useAuth = create<AuthState>()(
               rememberMe,
             });
 
+            console.log("Sign in result:", result);
+
             if (result.error) {
               throw new Error(result.error.message || "Failed to sign in");
             }
 
             if (result.data) {
+              // Verify session immediately after login
+              const sessionCheck = await debugSession();
+              console.log("Post-login session check:", sessionCheck);
+
               // Update state with user data
               const userData = {
                 id: result.data.user.id,
@@ -119,12 +148,34 @@ export const useAuth = create<AuthState>()(
 
               set({
                 user: userData,
+                session: sessionCheck?.data?.session ?? null,
                 isAuthenticated: true,
               });
             }
           } catch (error) {
             set({ error: (error as Error).message });
             throw error;
+          } finally {
+            set({ isLoading: false });
+          }
+        },
+
+        logout: async () => {
+          set({ isLoading: true, error: null });
+          try {
+            // Only attempt to sign out if we have a session
+            if (get().session?.token) {
+              await signOut();
+            }
+            get().clearAuth();
+          } catch (error) {
+            // If the error is about no session, just clear the auth state
+            if ((error as Error).message.includes("Failed to get session")) {
+              get().clearAuth();
+            } else {
+              set({ error: (error as Error).message });
+              throw error;
+            }
           } finally {
             set({ isLoading: false });
           }
@@ -213,6 +264,22 @@ export const useAuth = create<AuthState>()(
             set({ isLoading: false });
           }
         },
+        verifySession: () => {
+          const currentSession = get().session;
+          if (!isValidSession(currentSession)) {
+            get().clearAuth();
+            return false;
+          }
+          return true;
+        },
+        verifyAndUpdateSession: async () => {
+          const session = get().session;
+          if (!session) {
+            get().clearAuth();
+          } else if (session.id !== get().session?.id) {
+            set({ session });
+          }
+        },
       }),
       {
         name: "auth-storage",
@@ -221,6 +288,11 @@ export const useAuth = create<AuthState>()(
           session: state.session,
           isAuthenticated: state.isAuthenticated,
         }),
+        onRehydrateStorage: () => (state) => {
+          if (state?.session && !isValidSession(state.session)) {
+            state.clearAuth();
+          }
+        },
       },
     ),
   ),
@@ -238,17 +310,13 @@ export const useAuthError = () => useAuth((state) => state.error);
 export const useAuthActions = () => {
   const store = useAuth();
   return {
+    logout: store.logout,
     login: store.login,
     register: store.register,
+    clearAuth: store.clearAuth,
     updateEmail: store.updateUserEmail,
     updatePassword: store.updateUserPassword,
     updateProfile: store.updateUserProfile,
     requestPasswordReset: store.requestPasswordReset,
   };
-};
-
-// Session check utility
-export const isValidSession = (session: Session | null): boolean => {
-  if (!session) return false;
-  return new Date(session.expiresAt) > new Date();
 };

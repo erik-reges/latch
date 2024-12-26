@@ -12,19 +12,28 @@ import { config } from "../lib/config";
 export const api = new Elysia({ prefix: "/api" })
   .use(
     cors({
-      origin: [config.appBaseUrl],
+      origin: config.isDev
+        ? ["http://localhost:8080"]
+        : ["https://latch-falling-pond-1256.fly.dev"],
       credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "Cookie",
+        "X-Requested-With",
+      ],
+      exposeHeaders: ["Set-Cookie"],
+      maxAge: 86400,
+      preflight: true,
     }),
   )
 
   .all("/auth/*", betterAuthView)
   .use(logger())
-  .use(dbPlugin)
 
   .use(vehiclesRouter)
-  .use(userMiddleware)
-  .get("/user", ({ user }) => user)
-  .get("/user", ({ db }) => db.select());
+  .use(userRouter);
 
 export type App = typeof api;
 

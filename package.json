@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "bun --filter '*' dev",
-    "dev:client": "bun --cwd packages/client dev",
+    "dev:web": "bun --cwd packages/client dev",
     "dev:api": "bun --cwd packages/api dev",
     "deploy": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api && fly deploy --config ./fly.client.toml --dockerfile ./Dockerfile.client",
     "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
