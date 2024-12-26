@@ -1,9 +1,9 @@
 import Elysia, { t } from "elysia";
-import { db } from "@latch/db";
 import { vehicles, type Vehicle } from "@latch/db/drizzle/auth-schema";
 import { createId } from "@paralleldrive/cuid2";
 import { asc, desc, eq, gt, sql } from "drizzle-orm";
 import { userMiddleware } from "@latch/api/lib/middleware";
+import { dbPlugin } from "@latch/api/lib/db";
 
 export const vehicleSchema = t.Object({
   name: t.String(),
@@ -32,7 +32,8 @@ export const vehiclesRouter = new Elysia({
   prefix: "/vehicles",
 })
   .use(userMiddleware)
-  .get("/count", async ({}) => {
+  .use(dbPlugin)
+  .get("/count", async ({ db }) => {
     const count = await db
       .select({ count: sql`cast(count(*) as integer)` })
       .from(vehicles)
@@ -42,7 +43,7 @@ export const vehiclesRouter = new Elysia({
   })
   .get(
     "/page",
-    async ({ query }) => {
+    async ({ query, db }) => {
       const page = Number(query.cursor) || 0;
       const pageSize = 10;
       const offset = page * pageSize;
@@ -92,19 +93,19 @@ export const vehiclesRouter = new Elysia({
       }),
     },
   )
-  .get("", async () => {
+  .get("", async ({ db }) => {
     return await db.select().from(vehicles).orderBy(asc(vehicles.id)).limit(10);
   })
   .get(
     "/:id",
-    async ({ params: { id } }) => {
+    async ({ params: { id }, db }) => {
       return await db.select().from(vehicles).where(eq(vehicles.id, id));
     },
     { params: t.Object({ id: t.String() }) },
   )
   .post(
     "",
-    async ({ body }) => {
+    async ({ body, db }) => {
       const vehicle = await db
         .insert(vehicles)
         .values({
@@ -119,7 +120,7 @@ export const vehiclesRouter = new Elysia({
   )
   .put(
     "/:id",
-    async ({ params: { id }, body }) => {
+    async ({ params: { id }, body, db }) => {
       const vehicle = await db
         .update(vehicles)
         .set(body)
@@ -134,7 +135,7 @@ export const vehiclesRouter = new Elysia({
   )
   .delete(
     "/:id",
-    async ({ params: { id } }) => {
+    async ({ params: { id }, db }) => {
       const vehicle = await db
         .delete(vehicles)
         .where(eq(vehicles.id, id))

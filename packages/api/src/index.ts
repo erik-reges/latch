@@ -6,27 +6,27 @@ import { vehiclesRouter } from "./routes/vehicles";
 import { logger } from "@bogeychan/elysia-logger";
 import { userRouter } from "./routes/user";
 import { userMiddleware } from "../lib/middleware";
+import { dbPlugin } from "../lib/db";
+import { config } from "../lib/config";
 
-export const port = 3000;
-export const hostname = "localhost";
-export const baseUrl = `${hostname}:${port}`;
-export const isDev = process.env.NODE_ENV !== "production";
 export const api = new Elysia({ prefix: "/api" })
-
   .use(
     cors({
-      origin: [`${process.env.APP_URL!}`],
+      origin: [config.appBaseUrl],
+      credentials: true,
     }),
   )
 
   .all("/auth/*", betterAuthView)
   .use(logger())
+  .use(dbPlugin)
 
   .use(vehiclesRouter)
   .use(userMiddleware)
   .get("/user", ({ user }) => user)
-  .listen(3000);
+  .get("/user", ({ db }) => db.select());
 
 export type App = typeof api;
 
-console.log(`🍣 Server running at http${isDev ? "" : "s"}://${baseUrl}/api`);
+api.listen(config.port);
+console.log(`🍣 Server running at ${config.apiBaseUrl}/api`);

@@ -1,18 +1,18 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@latch/db";
 import {
   user,
   session,
   verification,
   account,
 } from "@latch/db/drizzle/auth-schema";
-
 import type { Context } from "elysia";
+import { db } from "./db";
+import { config } from "./config";
 
 export const bAuth = betterAuth({
-  // secret: process.env.BETTER_AUTH_SECRET!,
-  // baseUrl: process.env.API_URL!,
+  secret: process.env.BETTER_AUTH_SECRET!,
+  baseUrl: `${config.apiBaseUrl}/api/auth`,
   schema: {
     user,
     session,
@@ -37,7 +37,7 @@ export const bAuth = betterAuth({
       }
     },
   },
-  trustedOrigins: [`${process.env.APP_URL!}`],
+  trustedOrigins: [config.appBaseUrl],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),

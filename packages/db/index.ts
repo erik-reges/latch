@@ -2,8 +2,10 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schemas from "./drizzle/auth-schema";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL!,
-});
+export function createDB(url: string) {
+  const pool = new Pool({
+    connectionString: url,
+  });
 
-export const db = drizzle(pool, { schema: schemas });
+  return drizzle(pool, { schema: schemas });
+}
