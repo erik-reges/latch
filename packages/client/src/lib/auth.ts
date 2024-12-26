@@ -37,6 +37,7 @@ export const {
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 export const isValidSession = (session: Session | null): boolean => {

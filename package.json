@@ -12,7 +12,9 @@
     "dev:api": "bun --cwd packages/api dev",
     "deploy": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api && fly deploy --config ./fly.client.toml --dockerfile ./Dockerfile.client",
     "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
-    "deploy:web": "fly deploy --config ./fly.client.toml --dockerfile ./Dockerfile.client"
+    "deploy:web": "fly deploy --config ./fly.client.toml --dockerfile ./Dockerfile.client",
+    "commit": "git add . && git commit -m \"stuff\"",
+    "release": "bun commit && bun run deploy"
   },
   "type": "module",
   "devDependencies": {

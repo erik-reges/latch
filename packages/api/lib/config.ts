@@ -9,4 +9,5 @@ export const config = {
     process.env.NODE_ENV !== "production"
       ? "http://localhost:8080"
       : "https://latch-falling-pond-1256.fly.dev",
-};
+  cookieDomain: process.env.NODE_ENV === "production" ? ".fly.dev" : undefined,
+} as const;

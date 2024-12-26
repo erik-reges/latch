@@ -13,8 +13,11 @@ export const api = new Elysia({ prefix: "/api" })
   .use(
     cors({
       origin: config.isDev
-        ? ["http://localhost:8080"]
-        : ["https://latch-falling-pond-1256.fly.dev"],
+        ? ["http://localhost:8080", "http://localhost:3000"]
+        : [
+            "https://latch-falling-pond-1256.fly.dev",
+            "https://latch-cold-cloud-2771.fly.dev",
+          ],
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
