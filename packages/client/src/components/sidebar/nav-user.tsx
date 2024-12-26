@@ -19,7 +19,7 @@ import {
 import { revokeSession, signOut, type User } from "@/lib/auth";
 import { useNavigate } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useAuth } from "@/stores/auth-store";
+import { useAuth } from "@/lib/auth";
 
 interface NavUserProps {
   user: User;

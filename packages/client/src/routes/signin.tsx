@@ -11,14 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth";
+import { signIn, useAuth } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/stores/auth-store";
 
 const SignInSchema = Type.Object({
   email: Type.String({

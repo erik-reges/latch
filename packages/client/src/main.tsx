@@ -6,7 +6,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/dark-mode/theme-provider";
 import { treatyClient } from "../../api/lib/eden";
 
-export const api = treatyClient();
+console.log(import.meta.env.VITE_API_URL);
+export const api = treatyClient(import.meta.env.VITE_API_URL);
 export type API = typeof api;
 export const qc = new QueryClient();
 

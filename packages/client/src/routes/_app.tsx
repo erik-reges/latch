@@ -3,7 +3,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/sidebar/app-header";
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/stores/auth-store";
+import { useAuth } from "@/lib/auth";
 
 import { getSession } from "@/lib/auth";
 

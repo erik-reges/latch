@@ -5,7 +5,7 @@ import type {
   ProfileFormValues,
 } from "@/routes/_app/account";
 import { passwordSchema, profileSchema } from "@/routes/_app/account";
-import { useUser } from "@/stores/auth-store";
+import { useUser } from "@/lib/auth";
 
 interface UseAccountFormsProps {
   onPasswordSubmit: (data: PasswordFormValues) => Promise<void>;

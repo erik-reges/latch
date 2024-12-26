@@ -23,12 +23,21 @@ export const bAuth = betterAuth({
     enabled: true,
     autoSignIn: false,
   },
-  trustedOrigins: [
-    "https://latch-falling-pond-1256.fly.dev",
-    "https://latch-falling-pond-1256.fly.dev/signin",
-    "http://localhost:8080",
-    "http://localhost:3000",
-  ],
+  logger: {
+    disabled: false,
+    level: "info",
+    log(level, message, ...args) {
+      const timestamp = new Date().toISOString();
+      const prefix = `[BetterAuth] ${timestamp} ${level.toUpperCase()}:`;
+
+      if (args.length > 0) {
+        console.log(prefix, message, ...args);
+      } else {
+        console.log(prefix, message);
+      }
+    },
+  },
+  trustedOrigins: [`${process.env.APP_URL!}`],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),

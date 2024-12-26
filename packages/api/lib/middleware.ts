@@ -24,8 +24,14 @@ export const userMiddleware = new Elysia()
   })
   .derive({ as: "scoped" }, async ({ request, set }): Promise<UserContext> => {
     const cookies = request.headers.get("cookie")?.split(";") ?? [];
+
+    const cookieNames =
+      process.env.NODE_ENV === "production"
+        ? ["__Secure-better-auth.session_token=", "better-auth.session_token="]
+        : ["better-auth.session_token="];
+
     const token = cookies
-      .find((c) => c.trim().startsWith("better-auth.session_token="))
+      .find((c) => cookieNames.some((name) => c.trim().startsWith(name)))
       ?.split("=")?.[1];
 
     const cached = sessionCache.get(token ?? "");

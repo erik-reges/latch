@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/pagination";
 
 import { useState, useMemo } from "react";
-import { cn } from "@/lib/utils";
 import { useDebouncedCallback } from "use-debounce";
 import { useQuery } from "@tanstack/react-query";
 import {

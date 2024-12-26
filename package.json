@@ -7,9 +7,12 @@
     ]
   },
   "scripts": {
+    "dev": "bun --filter '*' dev",
     "dev:client": "bun --cwd packages/client dev",
     "dev:api": "bun --cwd packages/api dev",
-    "dev": "bun dev:api && bun dev:client"
+    "deploy": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api && fly deploy --config ./fly.client.toml --dockerfile ./Dockerfile.client",
+    "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
+    "deploy:web": "fly deploy --config ./fly.client.toml --dockerfile ./Dockerfile.client"
   },
   "type": "module",
   "devDependencies": {

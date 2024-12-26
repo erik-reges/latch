@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signUp, useSession } from "@/lib/auth";
+import { signUp, useAuth, useSession } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Type as t } from "@sinclair/typebox";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/stores/auth-store";
+
 export const Route = createFileRoute("/signup")({
   component: SignUp,
 });

@@ -1,7 +1,7 @@
 import { signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/stores/auth-store";
+import { useAuth } from "@/lib/auth";
 
 interface LogoutProps {
   email: string;
