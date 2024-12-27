@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn, useSession } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
@@ -83,7 +83,7 @@ export function SignIn({}) {
 
         setIsSubmitting(false);
 
-        reset();
+        // reset();
         navigate({
           to: "/vehicles",
           search: {

@@ -9,6 +9,7 @@ import {
 import type { Context } from "elysia";
 import { db } from "./db";
 import { config } from "./config";
+import { createId } from "@paralleldrive/cuid2";
 // import type { BetterFetchPlugin } from "@better-fetch/fetch";
 
 // const credentialsPlugin: BetterFetchPlugin = {
@@ -34,61 +35,48 @@ import { config } from "./config";
 //         credentials: "include",
 //         mode: "cors",
 //         headers,
-//       };
+//       };k
 //     },
 //   },
 // };
+//
+const MyDomains: Record<string, string> = {
+  development: "localhost",
+  production: ".fly.dev",
+};
 
 export const bAuth = betterAuth({
-  // secret: process.env.BETTER_AUTH_SECRET!,
-  // baseUrl: `${config.apiBaseUrl}/api/auth`,
+  appName: "latch-auth",
+  secret: process.env.BETTER_AUTH_SECRET! + "123123",
+  basePath: "/api/auth",
+  trustedOrigins: [`${process.env.FRONTEND_URL}`],
   schema: {
     user,
     session,
     verification,
     account,
   },
+  advanced: {
+    generateId: () => createId(),
 
+    defaultCookieAttributes: {
+      sameSite: config.env === "production" ? "None" : "Lax",
+      secure: config.env === "production",
+      httpOnly: config.env === "production",
+      domain: MyDomains[config.env],
+    },
+
+    useSecureCookies: !config.isDev,
+    crossSubDomainCookies: {
+      enabled: config.env === "production",
+      domain: MyDomains[config.env],
+    },
+  },
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
   },
-  // session: {
-  //   freshAge: 24 * 60 * 60, // 24 hours in seconds
-  //   expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
-  //   cookieCache: {
-  //     enabled: true,
-  //     maxAge: 24 * 60 * 60, // 24 hours in seconds
-  //   },
-  //   updateAge: 24 * 60 * 60, // 24 hours in seconds
-  //   storeSessionInDatabase: true,
-  //   modelName: "session",
-  // },
-  // advanced: {
-  //   cookiePrefix: config.isDev ? "" : "__Secure-",
-  //   crossSubDomainCookies: {
-  //     enabled: !config.isDev,
-  //     domain: "fly.dev",
-  //   },
-  //   useSecureCookies: !config.isDev,
-  //   fetchPlugins: [credentialsPlugin],
 
-  //   cookies: {
-  //     session_token: {
-  //       attributes: {
-  //         sameSite: config.isDev ? "lax" : "none",
-  //         secure: !config.isDev,
-  //         path: "/",
-  //         httpOnly: true,
-  //         domain: config.isDev ? undefined : "fly.dev",
-  //         maxAge: 60 * 60 * 24 * 7,
-  //       },
-  //       name: config.isDev
-  //         ? "better-auth.session_token"
-  //         : "__Secure-better-auth.session_token", // Update this
-  //     },
-  //   },
-  // },
   logger: {
     disabled: false,
     level: "debug",
@@ -102,9 +90,6 @@ export const bAuth = betterAuth({
       }
     },
   },
-  trustedOrigins: config.isDev
-    ? ["http://localhost:8080", "http://localhost:3000"]
-    : ["https://latch-web-1337.fly.dev", "https://latch-api-1337.fly.dev"],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),

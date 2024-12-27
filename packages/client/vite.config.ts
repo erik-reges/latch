@@ -2,8 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import path from "path";
-const env = import.meta.env.VITE_ENV;
-const prod = env === "production";
+// const env = import.meta.env.VITE_ENV;
+// const prod = env === "production";
 
 export default defineConfig({
   plugins: [TanStackRouterVite({}), react()],
@@ -17,10 +17,11 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: prod
-          ? "https://latch-api-1337.fly.dev"
-          : "http://localhost:3000",
-        changeOrigin: true,
+        target: "http://localhost:3000",
+        // target: prod
+        //   ? "https://latch-api-1337.fly.dev"
+        //   : "http://localhost:3000",
+        // changeOrigin: true,
       },
     },
   },

@@ -9,13 +9,13 @@
   "scripts": {
     "dev": "bun --filter '*' dev",
     "dev:web": "bun --cwd packages/client dev",
+    "build:web": "bun --cwd packages/client build",
     "dev:api": "bun --cwd packages/api dev",
     "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
     "deploy:web": "fly deploy --config ./fly.web.toml --dockerfile ./Dockerfile.web",
     "launch:api": "fly launch --config ./fly.api.toml --dockerfile ./Dockerfile.api",
     "launch:web": "fly launch --config ./fly.web.toml --dockerfile ./Dockerfile.web",
-    "launch": "bun launch:api && bun launch:web",
-    "deploy": "bun deploy:api && bun deploy:web",
+    "deploy!": "bun deploy:api && bun deploy:web",
     "commit": "git add . && git commit -m \"stuff\" && git push",
     "release": "bun commit && bun run deploy"
   },

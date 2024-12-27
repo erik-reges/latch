@@ -5,18 +5,24 @@ import { vehiclesRouter } from "./routes/vehicles";
 import { logger } from "@bogeychan/elysia-logger";
 import { userRouter } from "./routes/user";
 import { config } from "../lib/config";
+import { bAuth } from "../lib/auth";
+import { staticPlugin } from "@elysiajs/static";
 
-// const forceHttps = new Elysia().onRequest(({ request }) => {
-//   const proto = request.headers.get("x-forwarded-proto");
-//   if (proto === "http") {
-//     const url = new URL(request.url);
-//     url.protocol = "https:";
-//     return Response.redirect(url.toString(), 301);
-//   }
-// });
+const forceHttps = new Elysia().onRequest(({ request }) => {
+  const proto =
+    request.headers.get("x-forwarded-proto") ||
+    request.headers.get("fly-forwarded-proto");
+  if (proto !== "https") {
+    const url = new URL(request.url);
+    url.protocol = "https:";
+    url.host = url.hostname;
+    return Response.redirect(url.toString(), 301);
+  }
+});
 
-export const api = new Elysia({ prefix: "/api", precompile: true })
+export const api = new Elysia({ prefix: "/api" })
   // .use(forceHttps)
+
   .use(
     cors({
       origin: config.isDev
@@ -35,7 +41,55 @@ export const api = new Elysia({ prefix: "/api", precompile: true })
       preflight: true,
     }),
   )
-  .get("/health", ({ server }) => `healthy ${server?.url}`)
+  .get("/health", async ({ server }) => `healthy server.url: ${server?.url}`)
+
+  .get("/ctx", async ({}) => {
+    const ctx = await bAuth.$context;
+
+    const safeCtx = {
+      // Core Authentication State
+
+      // Basic Configuration
+      appName: ctx.appName,
+      baseURL: ctx.options.baseURL,
+      basePath: ctx.options.basePath,
+
+      trustedOrigins: ctx.trustedOrigins,
+
+      // Auth Options
+      options: {
+        secret: ctx.options.secret,
+        advanced: ctx.options.advanced,
+        cookies: ctx.options.advanced?.cookies,
+      },
+
+      // Auth Cookies Configuration
+      authCookies: {
+        dontRememberToken: ctx.authCookies.dontRememberToken,
+        sessionToken: ctx.authCookies.sessionToken,
+        sessionData: ctx.authCookies.sessionData,
+      },
+
+      // Session Configuration
+      sessionConfig: {
+        updateAge: ctx.sessionConfig.updateAge,
+        expiresIn: ctx.sessionConfig.expiresIn,
+        freshAge: ctx.sessionConfig.freshAge,
+      },
+    };
+
+    // Add debug information about the environment
+    const debugInfo = {
+      environment: process.env.ENV,
+      timestamp: new Date().toISOString(),
+      nodeVersion: process.version,
+    };
+
+    return {
+      ...safeCtx,
+      debug: debugInfo,
+    };
+  })
 
   .all("/auth/*", betterAuthView)
   .use(logger())
