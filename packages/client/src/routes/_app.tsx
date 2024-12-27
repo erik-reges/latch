@@ -1,54 +1,75 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarInset,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/sidebar/app-header";
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/lib/auth";
+import { signOut, useSession } from "@/lib/auth";
 
 import { getSession } from "@/lib/auth";
+import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_app")({
-  component: LayoutComponent,
-  loader: async () => {
-    const { isAuthenticated, setAuth } = useAuth.getState();
-    console.log("Route loader - isAuthenticated:", isAuthenticated);
-
-    if (!isAuthenticated) {
-      const result = await getSession();
-      console.log("Route loader - session check result:", result);
-
-      if (result.data?.user && result.data?.session) {
-        console.log("Route loader - setting auth with:", result.data);
-        setAuth(result.data.user, result.data.session);
-        return result.data;
-      } else {
-        console.log("Route loader - no session, redirecting to signin");
-        throw redirect({
-          to: "/signin",
-          search: { email: undefined },
-        });
-      }
+  component: AppLayout,
+  beforeLoad: async ({}) => {
+    const { data } = await getSession();
+    if (!data) {
+      throw redirect({
+        to: "/signin",
+        search: { email: undefined },
+      });
     }
+  },
 
-    return {
-      user: useAuth.getState().user,
-      session: useAuth.getState().session,
-      isAuthenticated: useAuth.getState().isAuthenticated,
-    };
+  loader: async ({}) => {
+    const { data } = await getSession();
+    return { session: data?.session, user: data?.user };
   },
 });
-
-function LayoutComponent() {
+function AppLayout() {
+  // const {
+  //   data: sessionData,
+  //   isPending, //loading state
+  //   error, //error object
+  // } = useSession();
+  const navigate = useNavigate();
   const { user, session } = Route.useLoaderData();
-  if (!user || !session) {
-    throw Error("no auth2");
-  }
+  console.log(session);
+
+  // if (!sessionData) return;
+  // const user = sessionData?.user;
+  // const sesh = sessionData?.session;
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen relative w-full">
-        <AppSidebar user={user} session={session} />
+        <Button
+          variant={"default"}
+          onClick={() => {
+            signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  navigate({
+                    to: "/signin",
+                    search: {
+                      email: user?.email ?? undefined,
+                    },
+                  });
+                },
+              },
+            });
+          }}
+        >
+          Logout
+        </Button>
+        {/* <AppSidebar user={user} session={sesh} /> */}
         <SidebarInset>
-          <AppHeader email={user.email} token={session.token} />
+          {/* <AppHeader email={user.email} token={sesh.token} /> */}
+
           <Separator className="mb-4" />
           <div className="flex flex-1 flex-col p-4 pt-0">
             <Outlet />

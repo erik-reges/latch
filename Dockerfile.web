@@ -19,8 +19,10 @@ COPY packages/client packages/client
 
 # Set environment variables
 ARG VITE_API_URL
+ARG VITE_ENV
+
 ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_ENV="production"
+ENV VITE_ENV=$VITE_ENV
 
 # Install dependencies
 RUN bun install

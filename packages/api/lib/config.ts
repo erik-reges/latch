@@ -1,13 +1,9 @@
 export const config = {
-  isDev: process.env.NODE_ENV !== "production",
+  env: process.env.ENV || "development",
+  isDev: process.env.ENV === "development",
   port: process.env.PORT || 3000,
   apiBaseUrl:
-    process.env.NODE_ENV !== "production"
-      ? `http://localhost:${process.env.PORT || 3000}`
-      : "https://latch-cold-cloud-2771.fly.dev",
-  appBaseUrl:
-    process.env.NODE_ENV !== "production"
-      ? "http://localhost:8080"
-      : "https://latch-falling-pond-1256.fly.dev",
-  cookieDomain: process.env.NODE_ENV === "production" ? ".fly.dev" : undefined,
+    process.env.ENV === "production"
+      ? "https://latch-api-1337.fly.dev"
+      : "http://localhost:3000",
 } as const;

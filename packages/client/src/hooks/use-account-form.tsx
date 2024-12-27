@@ -5,7 +5,7 @@ import type {
   ProfileFormValues,
 } from "@/routes/_app/account";
 import { passwordSchema, profileSchema } from "@/routes/_app/account";
-import { useUser } from "@/lib/auth";
+import { useSession } from "@/lib/auth";
 
 interface UseAccountFormsProps {
   onPasswordSubmit: (data: PasswordFormValues) => Promise<void>;
@@ -16,7 +16,7 @@ export function useAccountForms({
   onPasswordSubmit,
   onProfileSubmit,
 }: UseAccountFormsProps) {
-  const user = useUser();
+  const { data } = useSession();
   const passwordForm = useForm<PasswordFormValues>({
     resolver: typeboxResolver(passwordSchema),
     defaultValues: {
@@ -29,7 +29,7 @@ export function useAccountForms({
   const profileForm = useForm<ProfileFormValues>({
     resolver: typeboxResolver(profileSchema),
     defaultValues: {
-      name: user?.name || "",
+      name: data?.user?.name || "",
     },
   });
 

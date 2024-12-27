@@ -4,6 +4,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { asc, desc, eq, gt, sql } from "drizzle-orm";
 import { userMiddleware } from "@latch/api/lib/middleware";
 import { dbPlugin } from "@latch/api/lib/db";
+import type { PgInteger } from "drizzle-orm/pg-core";
 
 export const vehicleSchema = t.Object({
   name: t.String(),
@@ -31,7 +32,7 @@ const updateVehicleSchema = t.Partial(vehicleSchema);
 export const vehiclesRouter = new Elysia({
   prefix: "/vehicles",
 })
-  .use(userMiddleware)
+  // .use(userMiddleware)
   .use(dbPlugin)
   .get("/count", async ({ db }) => {
     const count = await db

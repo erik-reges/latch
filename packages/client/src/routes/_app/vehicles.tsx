@@ -47,6 +47,26 @@ type SearchParams = {
   sortField: string;
   sortOrder: "asc" | "desc";
 };
+type PaginatedVehicles = {
+  data: {
+    length: string;
+    model: string;
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    maxSpeed: number;
+    maxWeight: string;
+    manufacturer: string;
+    yearManufactured: number;
+    status: "active" | "maintenance" | "decommissioned";
+    lastMaintenanceDate: string | null;
+    nextMaintenanceDate: string | null;
+  }[];
+  nextCursor: number | undefined;
+  hasMore: boolean;
+  totalCount: number;
+};
 
 export const Route = createFileRoute("/_app/vehicles")({
   component: VehiclesRoute,
@@ -62,36 +82,28 @@ export const Route = createFileRoute("/_app/vehicles")({
 
 function VehiclesRoute() {
   const { api, qc } = Route.useRouteContext();
-  const memoizedColumns = useMemo(() => columns, []);
   const { page, pageSize, sortField, sortOrder } = Route.useSearch();
-  const [sorting, setSorting] = useState<SortingState>(() => {
-    if (sortField) {
-      return [
-        {
-          id: sortField,
-          desc: sortOrder === "desc",
-        },
-      ];
-    }
-    // Provide default sorting state
-    return [
-      {
-        id: "yearManufactured",
-        desc: true,
-      },
-    ];
-  });
+  const memoizedColumns = useMemo(() => columns, []);
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: sortField || "yearManufactured",
+      desc: sortField ? sortOrder === "desc" : true,
+    },
+  ]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [searchValue, setSearchValue] = useState("");
 
   const { data: paginatedData, isLoading: isPaginatedLoading } = useQuery({
-    queryKey: ["vehicles-paginated", page, sorting], // Add sorting to queryKey
+    queryKey: ["vehicles-paginated", page, sorting],
     queryFn: async () => {
-      const sortField = sorting[0]?.id ?? "yearManufactured"; // Default sort field
+      const sortField = sorting[0]?.id ?? "yearManufactured";
       const sortOrder = sorting[0]?.desc ? "desc" : "asc";
 
       const queryKey = ["vehicles-paginated", page, sorting];
-      const existingData = qc.getQueryData(queryKey);
+      const existingData = qc.getQueryData<PaginatedVehicles>(queryKey);
+      if (existingData) {
+        return existingData;
+      }
 
       const { data } = await api.vehicles.page.get({
         query: {

@@ -1,16 +1,13 @@
-# fly.toml app configuration file generated for latch-falling-pond-1256 on 2024-12-25T23:52:20+01:00
+# fly.toml app configuration file generated for latch-web-1337 on 2024-12-27T09:25:03+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "latch-falling-pond-1256"
+app = 'latch-web-1337'
 primary_region = 'arn'
 
 [build]
-  [build.args]
-    PORT="3000"
-    NODE_ENV = "production"
-    VITE_API_URL = "https://latch-cold-cloud-2771.fly.dev"
+  dockerfile = './Dockerfile.web'
 
 [http_service]
   internal_port = 8080
@@ -19,6 +16,10 @@ primary_region = 'arn'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+
+[env]
+  VITE_API_URL = "https://latch-api-1337.fly.dev"
+  VITE_ENV = "production"
 
 [[vm]]
   memory = '1gb'

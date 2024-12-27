@@ -11,17 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  signIn,
-  useAuth,
-  useAuthActions,
-  useAuthError,
-  useAuthLoading,
-} from "@/lib/auth";
+import { signIn, useSession } from "@/lib/auth";
 import type { Static } from "@sinclair/typebox";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -54,20 +48,10 @@ export const Route = createFileRoute("/signin")({
 
 export function SignIn({}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errormsg, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const { email } = Route.useSearch();
-  const { isAuthenticated } = useAuth();
-  const { login, clearAuth } = useAuthActions();
   const navigate = useNavigate();
-  const isLoading = useAuthLoading();
-  const error = useAuthError();
-  useEffect(() => {
-    if (!isAuthenticated) {
-      clearAuth();
-    } else {
-      navigate({ to: "/" });
-    }
-  }, [isAuthenticated, clearAuth, navigate]);
 
   const {
     register,
@@ -83,8 +67,22 @@ export function SignIn({}) {
 
   const onSubmit = useCallback(
     async (data: SignInFormData) => {
+      setIsSubmitting(true);
       try {
-        await login(data.email, data.password, true);
+        const { error } = await signIn.email({
+          email: data.email,
+          password: data.password,
+          rememberMe: true,
+        });
+
+        if (error) {
+          setError(error.message || "An error occurred during sign in");
+          setIsSubmitting(false);
+          return;
+        }
+
+        setIsSubmitting(false);
+
         reset();
         navigate({
           to: "/vehicles",
@@ -99,7 +97,7 @@ export function SignIn({}) {
         console.error("Login error:", err);
       }
     },
-    [login, navigate, reset],
+    [navigate, reset],
   );
 
   return (
@@ -171,7 +169,7 @@ export function SignIn({}) {
               disabled={isSubmitting}
               aria-disabled={isSubmitting}
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span>Signing in...</span>

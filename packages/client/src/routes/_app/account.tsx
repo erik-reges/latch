@@ -24,7 +24,7 @@ import { changePassword } from "@/lib/auth";
 import { useAccountForms } from "@/hooks/use-account-form";
 import { Type } from "@sinclair/typebox";
 
-export const emailSchema = Type.Object(
+const emailSchema = Type.Object(
   {
     email: Type.String({
       pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
@@ -59,7 +59,6 @@ export const profileSchema = Type.Object(
   },
 );
 
-export type EmailFormValues = typeof emailSchema.static;
 export type PasswordFormValues = typeof passwordSchema.static;
 export type ProfileFormValues = typeof profileSchema.static;
 
