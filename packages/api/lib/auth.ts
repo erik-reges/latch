@@ -13,7 +13,7 @@ import { createId } from "@paralleldrive/cuid2";
 
 const MyDomains: Record<string, string> = {
   development: "localhost",
-  production: ".fly.dev",
+  production: "fly.dev",
 };
 
 export const bAuth = betterAuth({
