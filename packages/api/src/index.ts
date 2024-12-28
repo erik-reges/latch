@@ -8,20 +8,7 @@ import { config } from "../lib/config";
 import { bAuth } from "../lib/auth";
 import { staticPlugin } from "@elysiajs/static";
 
-const forceHttps = new Elysia().onRequest(({ request }) => {
-  const proto =
-    request.headers.get("x-forwarded-proto") ||
-    request.headers.get("fly-forwarded-proto");
-  if (proto !== "https") {
-    const url = new URL(request.url);
-    url.protocol = "https:";
-    url.host = url.hostname;
-    return Response.redirect(url.toString(), 301);
-  }
-});
-
 export const api = new Elysia({ prefix: "/api" })
-  // .use(forceHttps)
 
   .use(
     cors({
@@ -58,7 +45,7 @@ export const api = new Elysia({ prefix: "/api" })
 
       // Auth Options
       options: {
-        secret: ctx.options.secret,
+        // secret: ctx.options.secret,
         advanced: ctx.options.advanced,
         cookies: ctx.options.advanced?.cookies,
       },

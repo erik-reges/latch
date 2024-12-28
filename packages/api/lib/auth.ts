@@ -10,36 +10,7 @@ import type { Context } from "elysia";
 import { db } from "./db";
 import { config } from "./config";
 import { createId } from "@paralleldrive/cuid2";
-// import type { BetterFetchPlugin } from "@better-fetch/fetch";
 
-// const credentialsPlugin: BetterFetchPlugin = {
-//   name: "credentials-plugin",
-//   id: "credentials-plugin",
-//   hooks: {
-//     onRequest: async (context) => {
-//       const headers = new Headers(context.headers);
-//       // Force HTTPS in production
-//       if (config.env === "production") {
-//         headers.set("X-Forwarded-Proto", "https");
-//       }
-
-//       // Log the current protocol
-//       console.log("Request protocol:", {
-//         url: context.url,
-//         originalProto: headers.get("x-forwarded-proto"),
-//         forcedProto: "https",
-//       });
-
-//       return {
-//         ...context,
-//         credentials: "include",
-//         mode: "cors",
-//         headers,
-//       };k
-//     },
-//   },
-// };
-//
 const MyDomains: Record<string, string> = {
   development: "localhost",
   production: ".fly.dev",
@@ -59,14 +30,14 @@ export const bAuth = betterAuth({
   advanced: {
     generateId: () => createId(),
 
-    defaultCookieAttributes: {
-      sameSite: config.env === "production" ? "None" : "Lax",
-      secure: config.env === "production",
-      httpOnly: config.env === "production",
-      domain: MyDomains[config.env],
-    },
+    // defaultCookieAttributes: {
+    //     sameSite: config.env === "production" ? "None" : "Lax",
+    //     secure: config.env === "production",
+    //     httpOnly: config.env === "production",
+    //     domain: MyDomains[config.env],
+    //   },
 
-    useSecureCookies: !config.isDev,
+    useSecureCookies: config.env === "production",
     crossSubDomainCookies: {
       enabled: config.env === "production",
       domain: MyDomains[config.env],
