@@ -1,27 +1,7 @@
-import { pgTable, foreignKey, unique, text, timestamp, boolean, integer, numeric } from "drizzle-orm/pg-core"
+import { pgTable, text, timestamp, unique, boolean, foreignKey, integer, numeric } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
-
-export const session = pgTable("session", {
-	id: text().primaryKey().notNull(),
-	expiresAt: timestamp({ mode: 'string' }).notNull(),
-	token: text().notNull(),
-	createdAt: timestamp({ mode: 'string' }).notNull(),
-	updatedAt: timestamp({ mode: 'string' }).notNull(),
-	ipAddress: text(),
-	userAgent: text(),
-	userId: text().notNull(),
-}, (table) => {
-	return {
-		sessionUserIdUserIdFk: foreignKey({
-			columns: [table.userId],
-			foreignColumns: [user.id],
-			name: "session_userId_user_id_fk"
-		}),
-		sessionTokenUnique: unique("session_token_unique").on(table.token),
-	}
-});
 
 export const verification = pgTable("verification", {
 	id: text().primaryKey().notNull(),
@@ -67,6 +47,26 @@ export const account = pgTable("account", {
 			foreignColumns: [user.id],
 			name: "account_userId_user_id_fk"
 		}),
+	}
+});
+
+export const session = pgTable("session", {
+	id: text().primaryKey().notNull(),
+	expiresAt: timestamp({ mode: 'string' }).notNull(),
+	token: text().notNull(),
+	createdAt: timestamp({ mode: 'string' }).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).notNull(),
+	ipAddress: text(),
+	userAgent: text(),
+	userId: text().notNull(),
+}, (table) => {
+	return {
+		sessionUserIdUserIdFk: foreignKey({
+			columns: [table.userId],
+			foreignColumns: [user.id],
+			name: "session_userId_user_id_fk"
+		}),
+		sessionTokenUnique: unique("session_token_unique").on(table.token),
 	}
 });
 
