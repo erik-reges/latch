@@ -29,29 +29,16 @@ export const bAuth = betterAuth({
   },
   advanced: {
     generateId: () => createId(),
-
-    // defaultCookieAttributes: {
-    //     sameSite: config.env === "production" ? "None" : "Lax",
-    //     secure: config.env === "production",
-    //     httpOnly: config.env === "production",
-    //     domain: MyDomains[config.env],
-    //   },
-
+    defaultCookieAttributes: {
+      sameSite: config.env === "production" ? "None" : "Lax",
+      secure: config.env === "production",
+      httpOnly: config.env === "production",
+      domain: MyDomains[config.env],
+    },
     useSecureCookies: config.env === "production",
     crossSubDomainCookies: {
       enabled: config.env === "production",
       domain: MyDomains[config.env],
-    },
-  },
-  cookies: {
-    sessionToken: {
-      options: {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None", // Try this instead of Lax
-        domain: "latch-api-1337.fly.dev", // Use exact domain
-        path: "/",
-      },
     },
   },
   emailAndPassword: {
