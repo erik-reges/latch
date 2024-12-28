@@ -5,6 +5,7 @@ import { vehiclesRouter } from "./routes/vehicles";
 import { logger } from "@bogeychan/elysia-logger";
 import { config } from "../lib/config";
 import { bAuth } from "../lib/auth";
+import { Auth } from "../lib/middleware";
 
 export const api = new Elysia({ prefix: "/api" })
   .use(
@@ -25,6 +26,7 @@ export const api = new Elysia({ prefix: "/api" })
       preflight: true,
     }),
   )
+  .use(Auth)
   .use(logger())
 
   .get("/health", async ({ server }) => `healthy server.url: ${server?.url}`)
