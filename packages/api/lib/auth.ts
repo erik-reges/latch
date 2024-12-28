@@ -13,7 +13,7 @@ import { createId } from "@paralleldrive/cuid2";
 
 const MyDomains: Record<string, string> = {
   development: "localhost",
-  production: "fly.dev",
+  production: "latch-api-1337.fly.dev",
 };
 
 export const bAuth = betterAuth({
@@ -41,6 +41,17 @@ export const bAuth = betterAuth({
     crossSubDomainCookies: {
       enabled: config.env === "production",
       domain: MyDomains[config.env],
+    },
+  },
+  cookies: {
+    sessionToken: {
+      options: {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None", // Try this instead of Lax
+        domain: "latch-api-1337.fly.dev", // Use exact domain
+        path: "/",
+      },
     },
   },
   emailAndPassword: {
