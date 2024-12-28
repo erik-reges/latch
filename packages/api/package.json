@@ -2,10 +2,7 @@
   "name": "@latch/api",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
-    "build:schema": "zero-build-schema ./zero/zero-schema.ts --out ./zero/schema.json",
-    "dev:zero": "docker-compose up"
+    "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.7",
@@ -16,6 +13,7 @@
     "@elysiajs/swagger": "^1.2.0",
     "@latch/db": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@upstash/redis": "^1.34.3",
     "better-auth": "^1.0.11",
     "drizzle-orm": "^0.36.4",
     "elysia": "^1.2.9"
@@ -24,5 +22,5 @@
     "@types/bun": "^1.1.14",
     "bun-types": "latest"
   },
-  "module": "src/index.js"
+  "module": "src/index.ts"
 }

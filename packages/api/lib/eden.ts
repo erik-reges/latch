@@ -10,10 +10,3 @@ export function treatyClient(url: string) {
     },
   }).api;
 }
-
-//     ...context,
-//    ...context,
-// credentials: "include",
-// mode: "cors",
-// headers,
-// //

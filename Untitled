@@ -1,0 +1,7 @@
+BETTER_AUTH_SECRET=Rxc9sBuq6OouXT3tQMS6la4lByxdRs4Z
+BETTER_AUTH_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:8080
+DATABASE_URL=postgresql://latchdb_owner:W2YNKpUTZB7c@ep-small-sunset-a27iisb1.eu-central-1.aws.neon.tech/latchdb?sslmode=require
+REDIS_URL=redis://default:16783f35517d445d975cef03e0b653eb@fly-latch.upstash.io:6379
+ENV=development
+PORT=3000

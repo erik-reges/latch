@@ -42,7 +42,6 @@ function AppLayout() {
   if (!sessionData) return;
   const user = sessionData?.user;
   const sesh = sessionData?.session;
-  console.log(sesh);
 
   return (
     <SidebarProvider>

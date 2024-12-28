@@ -98,11 +98,6 @@ function AccountRoute() {
 
   const { api } = Route.useRouteContext();
 
-  // const { data: sesh, error } = useQuery({
-  //   queryKey: ["session"],
-  //   queryFn: () => api.sesh.get(),
-  // });
-
   const {
     passwordForm,
     profileForm,

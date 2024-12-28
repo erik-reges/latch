@@ -1,11 +1,10 @@
 import { cors } from "@elysiajs/cors";
-import { betterAuthView } from "../lib/auth";
-import Elysia, { t, type Context } from "elysia";
+import Elysia from "elysia";
 import { vehiclesRouter } from "./routes/vehicles";
 import { logger } from "@bogeychan/elysia-logger";
 import { config } from "../lib/config";
-import { bAuth } from "../lib/auth";
-import { Auth } from "../lib/middleware";
+import { betterAuth } from "../lib/better-auth";
+const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
 
 export const api = new Elysia({ prefix: "/api" })
   .use(
@@ -28,52 +27,15 @@ export const api = new Elysia({ prefix: "/api" })
       preflight: true,
     }),
   )
-  .use(Auth)
-  .use(logger())
+  .all("/auth/*", async ({ request, error }) => {
+    if (!BETTER_AUTH_ACCEPT_METHODS.includes(request.method)) return error(405);
 
-  .get("/health", async ({ server }) => `healthy server.url: ${server?.url}`)
-
-  .get("/ctx", async ({}) => {
-    const ctx = await bAuth.$context;
-    const safeCtx = {
-      appName: ctx.appName,
-      baseURL: ctx.options.baseURL,
-      basePath: ctx.options.basePath,
-
-      trustedOrigins: ctx.trustedOrigins,
-
-      options: {
-        advanced: ctx.options.advanced,
-        cookies: ctx.options.advanced?.cookies,
-      },
-
-      authCookies: {
-        dontRememberToken: ctx.authCookies.dontRememberToken,
-        sessionToken: ctx.authCookies.sessionToken,
-        sessionData: ctx.authCookies.sessionData,
-      },
-
-      sessionConfig: {
-        updateAge: ctx.sessionConfig.updateAge,
-        expiresIn: ctx.sessionConfig.expiresIn,
-        freshAge: ctx.sessionConfig.freshAge,
-      },
-    };
-
-    const debugInfo = {
-      environment: process.env.ENV,
-      timestamp: new Date().toISOString(),
-      nodeVersion: process.version,
-    };
-
-    return {
-      ...safeCtx,
-      debug: debugInfo,
-    };
+    return betterAuth.handler(request);
   })
-  .get("/", () => `Hello from ${config.env}`)
 
-  .use(vehiclesRouter);
+  .use(logger())
+  .use(vehiclesRouter)
+  .get("/health", () => `healthy server`);
 
 api.listen(config.port);
 
