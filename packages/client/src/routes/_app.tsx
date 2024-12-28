@@ -7,11 +7,11 @@ import {
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/sidebar/app-header";
 import { Separator } from "@/components/ui/separator";
-import { signOut } from "@/lib/auth";
+// import { signOut } from "@/lib/auth";
 
 import { getSession } from "@/lib/auth";
-import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+// import { useNavigate } from "@tanstack/react-router";
+// import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -27,13 +27,13 @@ export const Route = createFileRoute("/_app")({
   },
 });
 function AppLayout() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { user, session } = Route.useLoaderData();
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen relative w-full">
-        <Button
+        {/* <Button
           variant={"default"}
           onClick={() => {
             signOut({
@@ -51,7 +51,7 @@ function AppLayout() {
           }}
         >
           Logout
-        </Button>
+        </Button> */}
         <AppSidebar user={user} session={session} />
         <SidebarInset>
           <AppHeader email={user.email} token={session.token} />
