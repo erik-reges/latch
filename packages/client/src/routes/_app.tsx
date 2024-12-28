@@ -7,7 +7,7 @@ import {
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/sidebar/app-header";
 import { Separator } from "@/components/ui/separator";
-import { signOut, useSession } from "@/lib/auth";
+import { signOut } from "@/lib/auth";
 
 import { getSession } from "@/lib/auth";
 import { useNavigate } from "@tanstack/react-router";
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
-  beforeLoad: async ({}) => {
+  loader: async ({}) => {
     const { data } = await getSession();
     if (!data) {
       throw redirect({
@@ -23,25 +23,12 @@ export const Route = createFileRoute("/_app")({
         search: { email: undefined },
       });
     }
+    return { session: data.session, user: data.user };
   },
-
-  // loader: async ({}) => {
-  //   const { data } = await getSession();
-  //   return { session: data?.session, user: data?.user };
-  // },
 });
 function AppLayout() {
-  const {
-    data: sessionData,
-    isPending, //loading state
-    error, //error object
-  } = useSession();
   const navigate = useNavigate();
-  // const { user, session } = Route.useLoaderData();
-
-  if (!sessionData) return;
-  const user = sessionData?.user;
-  const sesh = sessionData?.session;
+  const { user, session } = Route.useLoaderData();
 
   return (
     <SidebarProvider>
@@ -65,9 +52,9 @@ function AppLayout() {
         >
           Logout
         </Button>
-        {/* <AppSidebar user={user} session={sesh} /> */}
+        <AppSidebar user={user} session={session} />
         <SidebarInset>
-          {/* <AppHeader email={user.email} token={sesh.token} /> */}
+          <AppHeader email={user.email} token={session.token} />
 
           <Separator className="mb-4" />
           <div className="flex flex-1 flex-col p-4 pt-0">
