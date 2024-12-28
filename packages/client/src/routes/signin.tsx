@@ -83,7 +83,6 @@ export function SignIn({}) {
 
         setIsSubmitting(false);
 
-        // reset();
         navigate({
           to: "/vehicles",
           search: {

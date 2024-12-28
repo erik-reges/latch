@@ -1,25 +1,25 @@
 {
   "name": "latch",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --filter '*' dev",
+    "dev:web": "bun --cwd packages/client dev",
+    "build:web": "bun --cwd packages/client build",
+    "deploy:web": "fly deploy --config ./fly.web.toml --dockerfile ./Dockerfile.web",
+    "launch:web": "fly launch --config ./fly.web.toml --dockerfile ./Dockerfile.web",
+    "dev:api": "bun --cwd packages/api dev",
+    "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
+    "launch:api": "fly launch --config ./fly.api.toml --dockerfile ./Dockerfile.api",
+    "deploy!": "bun deploy:api && bun deploy:web",
+    "commit": "git add . && git commit -m \"stuff\" && git push",
+    "release": "bun commit && bun run deploy"
+  },
   "workspaces": {
     "packages": [
       "packages/*"
     ]
   },
-  "scripts": {
-    "dev": "bun --filter '*' dev",
-    "dev:web": "bun --cwd packages/client dev",
-    "build:web": "bun --cwd packages/client build",
-    "dev:api": "bun --cwd packages/api dev",
-    "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
-    "deploy:web": "fly deploy --config ./fly.web.toml --dockerfile ./Dockerfile.web",
-    "launch:api": "fly launch --config ./fly.api.toml --dockerfile ./Dockerfile.api",
-    "launch:web": "fly launch --config ./fly.web.toml --dockerfile ./Dockerfile.web",
-    "deploy!": "bun deploy:api && bun deploy:web",
-    "commit": "git add . && git commit -m \"stuff\" && git push",
-    "release": "bun commit && bun run deploy"
-  },
-  "type": "module",
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.9",
     "@types/bun": "latest"

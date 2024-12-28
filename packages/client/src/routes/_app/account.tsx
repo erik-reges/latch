@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -96,6 +96,13 @@ function AccountRoute() {
     },
   });
 
+  const { api } = Route.useRouteContext();
+
+  // const { data: sesh, error } = useQuery({
+  //   queryKey: ["session"],
+  //   queryFn: () => api.sesh.get(),
+  // });
+
   const {
     passwordForm,
     profileForm,
@@ -112,7 +119,7 @@ function AccountRoute() {
           <CardHeader className="max-w-md mx-auto">
             <CardTitle>
               <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
-                Account Settings
+                {/* {`Account Settings for user: ${sesh?.data?.user.email ?? ""}`} */}
               </h2>
             </CardTitle>
             <CardDescription>

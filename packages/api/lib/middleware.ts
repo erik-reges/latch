@@ -1,59 +1,60 @@
 import { Elysia } from "elysia";
 import { bAuth } from "./auth";
-import type { Session, User } from "better-auth/types";
-import { LRUCache } from "lru-cache";
+import type { Session, User } from "better-auth";
 
-const sessionCache = new LRUCache({
-  max: 1000, // Maximum number of items
-  ttl: 1000 * 60 * 5, // Time to live: 5 minutes
-});
+const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
 
-class UnauthorizedError extends Error {
-  constructor(message?: string) {
-    super(message);
-    this.name = "Unauthorized";
-  }
-}
-export interface UserContext extends Record<string, unknown> {
-  user: User;
-  session: Session;
-}
-export const userMiddleware = new Elysia()
-  .error({
-    UnauthorizedError,
-  })
-  .derive({ as: "scoped" }, async ({ request, set }): Promise<UserContext> => {
-    const cookies = request.headers.get("cookie")?.split(";") ?? [];
+export const Auth = new Elysia({ name: "Auth" }).all(
+  "/auth/*",
+  ({ request, error }) => {
+    if (!BETTER_AUTH_ACCEPT_METHODS.includes(request.method)) return error(405);
 
-    const cookieNames =
-      process.env.NODE_ENV === "production"
-        ? ["__Secure-better-auth.session_token=", "better-auth.session_token="]
-        : ["better-auth.session_token="];
+    const requestCookies = request.headers.get("cookie");
+    const origin = request.headers.get("origin");
+    const protocol = new URL(request.url).protocol;
+    const host = request.headers.get("host");
 
-    const token = cookies
-      .find((c) => cookieNames.some((name) => c.trim().startsWith(name)))
-      ?.split("=")?.[1];
+    console.log("Auth request details:", {
+      method: request.method,
+      url: request.url,
+      protocol,
+      origin,
+      host,
+      cookies: requestCookies,
+      headers: request.headers.toJSON(),
+      sessionToken: requestCookies?.match(
+        /(?:__Secure-)?better-auth\.session_token=([^;]+)/,
+      )?.[1],
+    });
 
-    const cached = sessionCache.get(token ?? "");
-    if (cached) {
-      return cached as UserContext;
-    }
+    const response = bAuth.handler(request);
 
-    const session = await bAuth.api.getSession({
+    response.then((res) => {
+      const setCookie = res.headers.get("set-cookie");
+      console.log("Auth response details:", {
+        status: res.status,
+        cookies: setCookie?.split(",").map((c) => c.trim()),
+        headers: res.headers.toJSON(),
+        origin,
+        host,
+      });
+    });
+
+    return response;
+  },
+);
+
+export const auth = new Elysia().derive(
+  { as: "global" },
+  async ({ request, error }) => {
+    const auth = await bAuth.api.getSession({
       headers: request.headers,
     });
 
-    if (!session || !token) {
-      set.status = 401;
-      throw new UnauthorizedError("No token");
+    if (!auth) {
+      return error(401, "Unauthorized");
     }
 
-    const context = {
-      user: session.user,
-      session: session.session,
-    };
-
-    sessionCache.set(token!, context);
-
-    return context;
-  });
+    return { auth };
+  },
+);

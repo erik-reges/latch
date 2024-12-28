@@ -86,7 +86,6 @@ export const betterAuthView = (context: Context) => {
       sessionToken: requestCookies?.match(
         /(?:__Secure-)?better-auth\.session_token=([^;]+)/,
       )?.[1],
-      isDev: config.isDev,
       cookieDomain: config.isDev ? undefined : ".fly.dev",
     });
 
@@ -99,7 +98,6 @@ export const betterAuthView = (context: Context) => {
         cookies: setCookie?.split(",").map((c) => c.trim()),
         parsedCookie: setCookie ? parseCookie(setCookie) : null,
         headers: res.headers.toJSON(),
-        location: res.headers.get("location"),
         origin,
         host,
       });

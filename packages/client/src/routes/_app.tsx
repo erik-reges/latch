@@ -25,24 +25,24 @@ export const Route = createFileRoute("/_app")({
     }
   },
 
-  loader: async ({}) => {
-    const { data } = await getSession();
-    return { session: data?.session, user: data?.user };
-  },
+  // loader: async ({}) => {
+  //   const { data } = await getSession();
+  //   return { session: data?.session, user: data?.user };
+  // },
 });
 function AppLayout() {
-  // const {
-  //   data: sessionData,
-  //   isPending, //loading state
-  //   error, //error object
-  // } = useSession();
+  const {
+    data: sessionData,
+    isPending, //loading state
+    error, //error object
+  } = useSession();
   const navigate = useNavigate();
-  const { user, session } = Route.useLoaderData();
-  console.log(session);
+  // const { user, session } = Route.useLoaderData();
 
-  // if (!sessionData) return;
-  // const user = sessionData?.user;
-  // const sesh = sessionData?.session;
+  if (!sessionData) return;
+  const user = sessionData?.user;
+  const sesh = sessionData?.session;
+  console.log(sesh);
 
   return (
     <SidebarProvider>
