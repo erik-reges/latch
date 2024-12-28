@@ -7,6 +7,7 @@ import { betterAuth } from "../lib/better-auth";
 const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
 
 export const api = new Elysia({ prefix: "/api" })
+  .get("/health", () => `healthy server`)
   .use(
     cors({
       origin: config.isDev
@@ -34,8 +35,7 @@ export const api = new Elysia({ prefix: "/api" })
   })
 
   .use(logger())
-  .use(vehiclesRouter)
-  .get("/health", () => `healthy server`);
+  .use(vehiclesRouter);
 
 api.listen(config.port);
 
