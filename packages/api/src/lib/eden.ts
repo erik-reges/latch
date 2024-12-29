@@ -1,5 +1,5 @@
 import { treaty } from "@elysiajs/eden";
-import type { App } from "../src";
+import type { App } from "../index";
 
 export function treatyClient(url: string) {
   return treaty<App>(url, {

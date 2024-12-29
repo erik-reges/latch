@@ -18,12 +18,12 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
   const location = useLocation();
 
   const getRouteLabel = (routeId: string) => {
-    // Remove leading slashes and _app prefix
+    // Remove leading slashes and _app-layout prefix
     const cleanPath = routeId
-      .replace(/^\/|^_app\//, "") // Remove leading slash and _app/
+      .replace(/^\/|^_app-layout\//, "") // Remove leading slash and _app-layout/
       .replace(/^__root__$/, "") // Remove root route identifier
-      .replace(/^\/_app$/, "") // Remove layout route identifier
-      .replace(/^_app\//, ""); // Remove any remaining _app/ prefix
+      .replace(/^\/_app-layout$/, "") // Remove layout route identifier
+      .replace(/^_app-layout\//, ""); // Remove any remaining _app-layout/ prefix
 
     const routeLabels: Record<string, string> = {
       "": "Home",
@@ -66,13 +66,13 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex items-center gap-2 px-4 text-xs">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
             {/* Always show Latch as first item */}
-            <BreadcrumbItem className="hidden md:block">
+            <BreadcrumbItem className="hidden md:block text-xs">
               <BreadcrumbLink href="/">Latch</BreadcrumbLink>
             </BreadcrumbItem>
 
@@ -80,22 +80,24 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
             {breadcrumbs.map((crumb, index) => (
               <React.Fragment key={crumb.path}>
                 <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  {crumb.isLast ? (
-                    <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink href={crumb.path}>
-                      {crumb.label}
-                    </BreadcrumbLink>
-                  )}
-                </BreadcrumbItem>
+                <div className="text-xs">
+                  <BreadcrumbItem>
+                    {crumb.isLast ? (
+                      <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink href={crumb.path}>
+                        {crumb.label}
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                </div>
               </React.Fragment>
             ))}
 
             {/* If we're at root and no other breadcrumbs, show Home */}
             {breadcrumbs.length === 0 && (
               <>
-                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbSeparator className="hidden md:block text-xs" />
                 <BreadcrumbItem>
                   <BreadcrumbPage>Home</BreadcrumbPage>
                 </BreadcrumbItem>

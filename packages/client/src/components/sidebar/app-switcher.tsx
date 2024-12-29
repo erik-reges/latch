@@ -6,6 +6,7 @@ import {
   ChevronsUpDown,
   Command,
   GalleryVerticalEnd,
+  TrainFront,
 } from "lucide-react";
 
 import {
@@ -27,8 +28,8 @@ import {
 const apps = [
   {
     name: "Traind",
-    logo: GalleryVerticalEnd,
-    plan: "Railway operation",
+    logo: TrainFront,
+    plan: "Railway operations",
   },
   {
     name: "EAM",
@@ -42,17 +43,9 @@ const apps = [
   },
 ];
 
-export function AppSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
-}) {
+export function AppSwitcher({}) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeTeam, setActiveTeam] = React.useState(apps[0]);
 
   return (
     <SidebarHeader>
@@ -64,8 +57,8 @@ export function AppSwitcher({
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <activeTeam.logo className="size-4" />
+                <div className="flex mr-1 aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <activeTeam.logo className="size-5" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
@@ -81,11 +74,12 @@ export function AppSwitcher({
               align="start"
               side={isMobile ? "bottom" : "right"}
               sideOffset={4}
+              alignOffset={0}
             >
               <DropdownMenuLabel className="text-xs text-muted-foreground">
                 {activeTeam.name}
               </DropdownMenuLabel>
-              {teams.map((team, index) => (
+              {apps.map((team, index) => (
                 <DropdownMenuItem
                   key={team.name}
                   onClick={() => setActiveTeam(team)}

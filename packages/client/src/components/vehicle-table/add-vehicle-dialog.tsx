@@ -42,8 +42,8 @@ export function AddVehicleDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon className="mr-2 h-4 w-4" />
+        <Button className="text-xs h-8 px-3 sm:px-3">
+          <PlusIcon className="mr-1 " />
           Add Vehicle
         </Button>
       </DialogTrigger>

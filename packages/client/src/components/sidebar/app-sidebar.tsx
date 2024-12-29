@@ -1,10 +1,10 @@
 import {
   AudioWaveform,
   Command,
+  FileSearch,
   GalleryVerticalEnd,
-  Home,
   Settings,
-  Train,
+  TrainFront,
 } from "lucide-react";
 
 import {
@@ -24,28 +24,16 @@ import { useMemo } from "react";
 import { type Session, type User } from "@/lib/auth";
 
 const items = [
+  { title: "Vehicles", url: "/vehicles", icon: TrainFront },
   {
     title: "Settings",
     url: "/account",
     icon: Settings,
   },
-];
-
-const apps = [
   {
-    name: "Traind",
-    logo: GalleryVerticalEnd,
-    plan: "Railway operations",
-  },
-  {
-    name: "EAM",
-    logo: AudioWaveform,
-    plan: "Enterprise asset management",
-  },
-  {
-    name: "Commando",
-    logo: Command,
-    plan: "Some other stuff",
+    title: "404",
+    url: "/404",
+    icon: FileSearch,
   },
 ];
 
@@ -72,32 +60,12 @@ export function AppSidebar({ user, session }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <AppSwitcher teams={apps} />
+      <AppSwitcher />
 
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={"/"}>
-                    <Home />
-                    <span>Home</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href={"/vehicles"}>
-                    <Home />
-                    <span>Vehicles</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              {menuItems}
-            </SidebarMenu>
+            <SidebarMenu>{menuItems}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

@@ -28,7 +28,7 @@ function SortingIcon({ column }: { column: any }) {
 export const columns: ColumnDef<Vehicle>[] = [
   {
     id: "actions",
-    header: () => <div className="w-[50px]"></div>, // Empty header for actions column
+    header: () => <div className="w-12"></div>,
     cell: ({ row }) => {
       const vehicle = row.original;
       return (
@@ -44,10 +44,9 @@ export const columns: ColumnDef<Vehicle>[] = [
     header: ({ column }) => (
       <div
         className={cn(
-          "group", // add group class for hover coordination
-          "flex flex-row items-center justify-center w-[125px] cursor-pointer select-none",
+          "group",
+          "flex flex-1 items-center justify-center min-w-[100px] cursor-pointer select-none",
           "transition-colors",
-          // text only changes on hover, not when sorted
           "text-muted-foreground hover:text-foreground",
         )}
         onClick={column.getToggleSortingHandler()}
@@ -59,7 +58,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     sortingFn: "text",
     cell: ({ row }) => (
       <div
-        className="flex max-w-[100px] truncate text-nowrap pl-3"
+        className="flex flex-1 min-w-[100px] truncate pl-3"
         title={row.getValue("name")}
       >
         {row.getValue("name")}
@@ -70,7 +69,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "model",
     header: ({ column }) => (
       <div
-        className="flex flex-row items-center justify-center w-[125px] cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[100px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         <span>Model</span>
@@ -80,7 +79,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     sortingFn: "text",
     cell: ({ row }) => (
       <div
-        className="flex max-w-[100px] truncate"
+        className="flex flex-1 min-w-[100px] truncate"
         title={row.getValue("model")}
       >
         {row.getValue("model")}
@@ -91,7 +90,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "maxSpeed",
     header: ({ column }) => (
       <div
-        className="flex flex-row items-center justify-center w-[100px] cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[80px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Max speed
@@ -100,7 +99,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     ),
     sortingFn: "alphanumeric",
     cell: ({ row }) => (
-      <div className="flex max-w-[100px] truncate justify-center">
+      <div className="flex flex-1 min-w-[80px] truncate justify-center">
         {row.getValue("maxSpeed")} km/h
       </div>
     ),
@@ -109,7 +108,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "maxWeight",
     header: ({ column }) => (
       <div
-        className="flex flex-row items-center justify-center w-[100px] cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[80px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Max weight
@@ -118,7 +117,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     ),
     sortingFn: "basic",
     cell: ({ row }) => (
-      <div className="flex max-w-[100px] truncate justify-center">
+      <div className="flex flex-1 min-w-[80px] truncate justify-center">
         {row.getValue("maxWeight")} kg
       </div>
     ),
@@ -127,7 +126,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "length",
     header: ({ column }) => (
       <div
-        className="flex flex-row items-center justify-center w-[100px] cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[80px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Length
@@ -136,7 +135,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     ),
     sortingFn: "basic",
     cell: ({ row }) => (
-      <div className="flex max-w-[100px] truncate justify-center">
+      <div className="flex flex-1 min-w-[80px] truncate justify-center">
         {row.getValue("length")} cm
       </div>
     ),
@@ -145,7 +144,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "manufacturer",
     header: ({ column }) => (
       <div
-        className=" flex flex-row items-center justify-center  w-[150px] cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[120px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Manufacturer
@@ -155,7 +154,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     sortingFn: "alphanumeric",
     cell: ({ row }) => (
       <div
-        className="max-w-[150px] text-center truncate"
+        className="flex flex-1 min-w-[120px] truncate justify-center"
         title={row.getValue("manufacturer")}
       >
         {row.getValue("manufacturer")}
@@ -166,7 +165,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "yearManufactured",
     header: ({ column }) => (
       <div
-        className="flex flex-row items-center justify-center w-[80px] cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[70px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Year
@@ -175,7 +174,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     ),
     sortingFn: "alphanumeric",
     cell: ({ row }) => (
-      <div className="w-[80px] text-center">
+      <div className="flex flex-1 min-w-[70px] justify-center">
         {row.getValue("yearManufactured")}
       </div>
     ),
@@ -184,7 +183,7 @@ export const columns: ColumnDef<Vehicle>[] = [
     accessorKey: "status",
     header: ({ column }) => (
       <div
-        className="flex flex-row items-center justify-center w-[170px] cursor-pointer select-none "
+        className="flex flex-1 items-center justify-center min-w-[100px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Status
@@ -197,7 +196,7 @@ export const columns: ColumnDef<Vehicle>[] = [
       return (
         <div
           className={cn(
-            "flex w-[170px] items-center justify-center gap-2",
+            "flex flex-1 min-w-[100px] items-center justify-center gap-2",
             status === "active" && "text-green-500",
             status === "maintenance" && "text-yellow-500",
             status === "decommissioned" && "text-red-500",

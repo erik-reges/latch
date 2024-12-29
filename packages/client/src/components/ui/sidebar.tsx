@@ -19,7 +19,7 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "16rem";
+const SIDEBAR_WIDTH = "14rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
@@ -232,11 +232,12 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
-        className="group peer hidden md:block text-sidebar-foreground"
+        className="group peer hidden lg-sidebar:block text-sidebar-foreground"
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
         data-side={side}
+        k
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div
@@ -339,8 +340,17 @@ const SidebarInset = React.forwardRef<
     <main
       ref={ref}
       className={cn(
+        // Base styles
         "relative flex min-h-svh flex-1 flex-col bg-background",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+        // Important: Add width transition and prevent overflow
+        "w-full transition-all duration-300 ease-in-out",
+        // Inset variant styles
+        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))]",
+        "md:peer-data-[variant=inset]:m-2",
+        "md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2",
+        "md:peer-data-[variant=inset]:ml-0",
+        "md:peer-data-[variant=inset]:rounded-xl",
+        "md:peer-data-[variant=inset]:shadow",
         className,
       )}
       {...props}

@@ -2,8 +2,8 @@ import { cors } from "@elysiajs/cors";
 import Elysia from "elysia";
 import { vehiclesRouter } from "./routes/vehicles";
 import { logger } from "@bogeychan/elysia-logger";
-import { config } from "../lib/config";
-import { betterAuth } from "../lib/better-auth";
+import { config } from "./lib/config";
+import { betterAuth } from "./lib/better-auth";
 const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
 
 export const api = new Elysia({ prefix: "/api" })

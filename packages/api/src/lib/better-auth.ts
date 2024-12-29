@@ -7,10 +7,10 @@ import {
   account,
 } from "@latch/db/drizzle/auth-schema";
 import { config } from "./config";
-import { createId } from "@paralleldrive/cuid2";
-import { db } from "../plugins/db";
+import { database } from "../lib/database";
+import { randomUUIDv7 } from "bun";
 
-const MyDomains: Record<string, string> = {
+const Domains: Record<string, string> = {
   development: "localhost",
   production: "latch-api-1337.fly.dev",
 };
@@ -33,17 +33,17 @@ export const betterAuth = bAuth({
     account,
   },
   advanced: {
-    generateId: () => createId(),
+    generateId: () => randomUUIDv7(),
     defaultCookieAttributes: {
       sameSite: config.env === "production" ? "None" : "Lax",
       secure: config.env === "production",
       httpOnly: config.env === "production",
-      domain: MyDomains[config.env],
+      domain: Domains[config.env],
     },
     useSecureCookies: config.env === "production",
     crossSubDomainCookies: {
       enabled: config.env === "production",
-      domain: MyDomains[config.env],
+      domain: Domains[config.env],
     },
   },
   emailAndPassword: {
@@ -64,7 +64,7 @@ export const betterAuth = bAuth({
       }
     },
   },
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(database, {
     provider: "pg",
   }),
 });

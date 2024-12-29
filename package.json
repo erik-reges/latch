@@ -13,7 +13,8 @@
     "launch:api": "fly launch --config ./fly.api.toml --dockerfile ./Dockerfile.api",
     "deploy!": "bun deploy:api && bun deploy:web",
     "commit": "git add . && git commit -m \"stuff\" && git push",
-    "release": "bun commit && bun run deploy!"
+    "release": "bun commit && bun run deploy!",
+    "proxy": "fly proxy 5432 -a latch-pg"
   },
   "workspaces": {
     "packages": [

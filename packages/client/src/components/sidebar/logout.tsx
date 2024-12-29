@@ -12,6 +12,7 @@ export function Logout({ email, token }: LogoutProps) {
 
   return (
     <Button
+      className="text-xs rounded-lg h-8"
       variant={"default"}
       onClick={() => {
         signOut({

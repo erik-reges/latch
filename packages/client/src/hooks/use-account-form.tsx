@@ -3,8 +3,8 @@ import { typeboxResolver } from "@hookform/resolvers/typebox";
 import type {
   PasswordFormValues,
   ProfileFormValues,
-} from "@/routes/_app/account";
-import { passwordSchema, profileSchema } from "@/routes/_app/account";
+} from "@/routes/_app-layout/account";
+import { passwordSchema, profileSchema } from "@/routes/_app-layout/account";
 import { useSession } from "@/lib/auth";
 
 interface UseAccountFormsProps {

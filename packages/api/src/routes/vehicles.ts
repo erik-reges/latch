@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia";
 import { vehicles, type Vehicle } from "@latch/db/drizzle/auth-schema";
 import { asc, desc, eq, gt, sql } from "drizzle-orm";
-import { dbPlugin } from "@latch/api/plugins/db";
+import { db } from "../plugins/db";
 
 export const vehicleSchema = t.Object({
   name: t.String(),
@@ -29,7 +29,7 @@ const updateVehicleSchema = t.Partial(vehicleSchema);
 export const vehiclesRouter = new Elysia({
   prefix: "/vehicles",
 })
-  .use(dbPlugin)
+  .use(db)
   .get("/count", async ({ db }) => {
     const count = await db
       .select({ count: sql`cast(count(*) as integer)` })

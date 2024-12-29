@@ -1,10 +1,10 @@
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { QueryClient } from "@tanstack/react-query";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/dark-mode/theme-provider";
-import { treatyClient } from "../../api/lib/eden";
+import { treatyClient } from "@latch/api/src/lib/eden";
+import { NotFound } from "./components/error/not-found";
 
 export const api = treatyClient(import.meta.env.VITE_API_URL);
 export type API = typeof api;
@@ -17,13 +17,7 @@ const router = createRouter({
     qc: qc,
     api: api,
   },
-  defaultNotFoundComponent: () => {
-    return (
-      <div className="h-full w-full flex flex-col items-center justify-center">
-        <p>404 Not found</p>
-      </div>
-    );
-  },
+  defaultNotFoundComponent: () => NotFound(),
 });
 
 declare module "@tanstack/react-router" {

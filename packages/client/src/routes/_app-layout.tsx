@@ -7,13 +7,9 @@ import {
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/sidebar/app-header";
 import { Separator } from "@/components/ui/separator";
-// import { signOut } from "@/lib/auth";
-
 import { getSession } from "@/lib/auth";
-// import { useNavigate } from "@tanstack/react-router";
-// import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/_app")({
+export const Route = createFileRoute("/_app-layout")({
   component: AppLayout,
   loader: async ({}) => {
     const { data } = await getSession();
@@ -27,37 +23,16 @@ export const Route = createFileRoute("/_app")({
   },
 });
 function AppLayout() {
-  // const navigate = useNavigate();
   const { user, session } = Route.useLoaderData();
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen relative w-full">
-        {/* <Button
-          variant={"default"}
-          onClick={() => {
-            signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  navigate({
-                    to: "/signin",
-                    search: {
-                      email: user?.email ?? undefined,
-                    },
-                  });
-                },
-              },
-            });
-          }}
-        >
-          Logout
-        </Button> */}
+      <div className="relative flex min-h-screen w-full overflow-hidden">
         <AppSidebar user={user} session={session} />
-        <SidebarInset>
+        <SidebarInset className="">
           <AppHeader email={user.email} token={session.token} />
-
           <Separator className="mb-4" />
-          <div className="flex flex-1 flex-col p-4 pt-0">
+          <div className="flex-1 p-4 pt-0">
             <Outlet />
           </div>
         </SidebarInset>

@@ -68,7 +68,7 @@ type PaginatedVehicles = {
   totalCount: number;
 };
 
-export const Route = createFileRoute("/_app/vehicles")({
+export const Route = createFileRoute("/_app-layout/vehicles")({
   component: VehiclesRoute,
   validateSearch: (search?: SearchParams) => {
     return {
@@ -135,64 +135,6 @@ function VehiclesRoute() {
     });
   };
 
-  // const prefetchNextPage = () => {
-  //   const nextPage = page;
-  //   if (nextPage <= totalPages) {
-  //     const queryKey = [
-  //       "vehicles-paginated",
-  //       nextPage,
-  //       sorting[0] ?? { id: "yearManufactured", desc: true },
-  //     ];
-
-  //     if (!qc.getQueryData(queryKey)) {
-  //       qc.prefetchQuery({
-  //         queryKey,
-  //         queryFn: async () => {
-  //           const { data } = await api.vehicles.page.get({
-  //             query: {
-  //               cursor: nextPage.toString(),
-  //               sortField: sorting[0]?.id ?? "yearManufactured",
-  //               sortOrder: sorting[0]?.desc ? "desc" : "asc",
-  //             },
-  //           });
-  //           return data;
-  //         },
-  //         staleTime: 30000,
-  //       });
-  //     }
-  //   }
-  // };
-
-  const handlePageChange = (newPage: number) => {
-    updatePage(newPage);
-
-    // const nextPage = newPage + 1;
-    // if (nextPage <= totalPages) {
-    //   const queryKey = [
-    //     "vehicles-paginated",
-    //     nextPage,
-    //     sorting[0] ?? { id: "yearManufactured", desc: true },
-    //   ];
-
-    //   if (!qc.getQueryData(queryKey)) {
-    //     qc.prefetchQuery({
-    //       queryKey,
-    //       queryFn: async () => {
-    //         const { data } = await api.vehicles.page.get({
-    //           query: {
-    //             cursor: nextPage.toString(),
-    //             sortField: sorting[0]?.id ?? "yearManufactured",
-    //             sortOrder: sorting[0]?.desc ? "desc" : "asc",
-    //           },
-    //         });
-    //         return data;
-    //       },
-    //       staleTime: 30000,
-    //     });
-    //   }
-    // }
-  };
-
   const vehicles = useMemo(() => {
     return paginatedData?.data ?? [];
   }, [paginatedData]);
@@ -235,10 +177,10 @@ function VehiclesRoute() {
         const newSorting = updater(sorting);
         setSorting(newSorting);
 
-        handlePageChange(1);
+        updatePage(1);
       }
     },
-    manualSorting: true, // Enable manual sorting
+    manualSorting: true,
 
     manualPagination: true,
     onPaginationChange: (updater) => {
@@ -255,40 +197,37 @@ function VehiclesRoute() {
         });
       }
     },
-    pageCount: Math.ceil((totalCount ?? 0) / 10), // Set total pages
+    pageCount: Math.ceil((totalCount ?? 0) / 10),
   });
   const navigate = useNavigate();
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-24">
         <Input
-          placeholder="Search all columns..."
+          placeholder="Search..."
           value={searchValue}
           onChange={(event) => {
             setSearchValue(event.target.value);
             debouncedSearch(event.target.value);
           }}
-          className="max-w-sm"
+          className="text-xs md:text-sm max-w-sm"
         />
         <AddVehicleDialog />
       </div>
 
       <div className="overflow-x-auto max-w-[calc(100vw-2rem)]">
-        {" "}
-        {/* or whatever padding/margin you have */}
-        <div className="min-w-[950px]">
-          {" "}
-          {/* Set a minimum width that fits all your columns comfortably */}
+        <div className="w-full">
           <div className="rounded-md border">
-            <Table>
+            <Table className="">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
-                        className="whitespace-nowrap bg-muted/50 font-medium text-muted-foreground px-0"
+                        style={{
+                          width: header.getSize(),
+                        }}
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -304,11 +243,11 @@ function VehiclesRoute() {
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
-                      className="h-24 text-center"
+                      className="text-xs h-12 md:h-16 md:text-sm text-center"
                     >
                       <div className="flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin" />
-                        <span className="ml-2">Loading vehicles...</span>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span className="ml-3">Loading vehicles...</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -332,10 +271,10 @@ function VehiclesRoute() {
                     </TableRow>
                   ))
                 ) : (
-                  <TableRow>
+                  <TableRow className="">
                     <TableCell
                       colSpan={columns.length}
-                      className="h-24 text-center"
+                      className="text-xs h-12 md:h-16 md:text-sm text-center"
                     >
                       No results.
                     </TableCell>
@@ -349,18 +288,19 @@ function VehiclesRoute() {
 
       <div className="w-full">
         <Pagination className=" p-2">
-          <PaginationContent className="flex items-center justify-between gap-4">
+          <PaginationContent className={`flex items-center  gap-4`}>
             <PaginationItem className="w-24 cursor-pointer">
               <PaginationPrevious
                 className="w-full"
-                onClick={() => handlePageChange(page - 1)}
+                onClick={() => updatePage(page - 1)}
               />
             </PaginationItem>
-
-            <div className="flex items-center gap-2 min-w-[275px]  justify-between">
+            <div
+              className={`flex w-full items-center justify-center ${totalPages === 0 ? "justify-center" : "justify-between"} gap-2 max-w-[275px] md:min-w-[275px]`}
+            >
               <PaginationItem className="cursor-pointer p-2">
                 <PaginationLink
-                  onClick={() => handlePageChange(1)}
+                  onClick={() => updatePage(1)}
                   isActive={page === 1}
                   className="min-w-[40px] flex justify-center"
                 >
@@ -404,8 +344,7 @@ function VehiclesRoute() {
               <Button
                 variant="ghost"
                 className="gap-1 pr-2.5 w-full cursor-pointer"
-                onClick={() => handlePageChange(page + 1)}
-                // onMouseEnter={prefetchNextPage}
+                onClick={() => updatePage(page + 1)}
                 disabled={page === totalPages}
                 size="default"
               >

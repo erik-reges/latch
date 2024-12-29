@@ -13,10 +13,10 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
-import { Route as AppImport } from './routes/_app'
-import { Route as AppIndexImport } from './routes/_app/index'
-import { Route as AppVehiclesImport } from './routes/_app/vehicles'
-import { Route as AppAccountImport } from './routes/_app/account'
+import { Route as AppLayoutImport } from './routes/_app-layout'
+import { Route as AppLayoutIndexImport } from './routes/_app-layout/index'
+import { Route as AppLayoutVehiclesImport } from './routes/_app-layout/vehicles'
+import { Route as AppLayoutAccountImport } from './routes/_app-layout/account'
 
 // Create/Update Routes
 
@@ -32,38 +32,38 @@ const SigninRoute = SigninImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppRoute = AppImport.update({
-  id: '/_app',
+const AppLayoutRoute = AppLayoutImport.update({
+  id: '/_app-layout',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppIndexRoute = AppIndexImport.update({
+const AppLayoutIndexRoute = AppLayoutIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => AppLayoutRoute,
 } as any)
 
-const AppVehiclesRoute = AppVehiclesImport.update({
+const AppLayoutVehiclesRoute = AppLayoutVehiclesImport.update({
   id: '/vehicles',
   path: '/vehicles',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => AppLayoutRoute,
 } as any)
 
-const AppAccountRoute = AppAccountImport.update({
+const AppLayoutAccountRoute = AppLayoutAccountImport.update({
   id: '/account',
   path: '/account',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => AppLayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_app': {
-      id: '/_app'
+    '/_app-layout': {
+      id: '/_app-layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AppImport
+      preLoaderRoute: typeof AppLayoutImport
       parentRoute: typeof rootRoute
     }
     '/signin': {
@@ -80,71 +80,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
-    '/_app/account': {
-      id: '/_app/account'
+    '/_app-layout/account': {
+      id: '/_app-layout/account'
       path: '/account'
       fullPath: '/account'
-      preLoaderRoute: typeof AppAccountImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppLayoutAccountImport
+      parentRoute: typeof AppLayoutImport
     }
-    '/_app/vehicles': {
-      id: '/_app/vehicles'
+    '/_app-layout/vehicles': {
+      id: '/_app-layout/vehicles'
       path: '/vehicles'
       fullPath: '/vehicles'
-      preLoaderRoute: typeof AppVehiclesImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppLayoutVehiclesImport
+      parentRoute: typeof AppLayoutImport
     }
-    '/_app/': {
-      id: '/_app/'
+    '/_app-layout/': {
+      id: '/_app-layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AppIndexImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppLayoutIndexImport
+      parentRoute: typeof AppLayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AppRouteChildren {
-  AppAccountRoute: typeof AppAccountRoute
-  AppVehiclesRoute: typeof AppVehiclesRoute
-  AppIndexRoute: typeof AppIndexRoute
+interface AppLayoutRouteChildren {
+  AppLayoutAccountRoute: typeof AppLayoutAccountRoute
+  AppLayoutVehiclesRoute: typeof AppLayoutVehiclesRoute
+  AppLayoutIndexRoute: typeof AppLayoutIndexRoute
 }
 
-const AppRouteChildren: AppRouteChildren = {
-  AppAccountRoute: AppAccountRoute,
-  AppVehiclesRoute: AppVehiclesRoute,
-  AppIndexRoute: AppIndexRoute,
+const AppLayoutRouteChildren: AppLayoutRouteChildren = {
+  AppLayoutAccountRoute: AppLayoutAccountRoute,
+  AppLayoutVehiclesRoute: AppLayoutVehiclesRoute,
+  AppLayoutIndexRoute: AppLayoutIndexRoute,
 }
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const AppLayoutRouteWithChildren = AppLayoutRoute._addFileChildren(
+  AppLayoutRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
-  '': typeof AppRouteWithChildren
+  '': typeof AppLayoutRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/account': typeof AppAccountRoute
-  '/vehicles': typeof AppVehiclesRoute
-  '/': typeof AppIndexRoute
+  '/account': typeof AppLayoutAccountRoute
+  '/vehicles': typeof AppLayoutVehiclesRoute
+  '/': typeof AppLayoutIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/account': typeof AppAccountRoute
-  '/vehicles': typeof AppVehiclesRoute
-  '/': typeof AppIndexRoute
+  '/account': typeof AppLayoutAccountRoute
+  '/vehicles': typeof AppLayoutVehiclesRoute
+  '/': typeof AppLayoutIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_app': typeof AppRouteWithChildren
+  '/_app-layout': typeof AppLayoutRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/_app/account': typeof AppAccountRoute
-  '/_app/vehicles': typeof AppVehiclesRoute
-  '/_app/': typeof AppIndexRoute
+  '/_app-layout/account': typeof AppLayoutAccountRoute
+  '/_app-layout/vehicles': typeof AppLayoutVehiclesRoute
+  '/_app-layout/': typeof AppLayoutIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -154,23 +156,23 @@ export interface FileRouteTypes {
   to: '/signin' | '/signup' | '/account' | '/vehicles' | '/'
   id:
     | '__root__'
-    | '/_app'
+    | '/_app-layout'
     | '/signin'
     | '/signup'
-    | '/_app/account'
-    | '/_app/vehicles'
-    | '/_app/'
+    | '/_app-layout/account'
+    | '/_app-layout/vehicles'
+    | '/_app-layout/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  AppRoute: typeof AppRouteWithChildren
+  AppLayoutRoute: typeof AppLayoutRouteWithChildren
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  AppRoute: AppRouteWithChildren,
+  AppLayoutRoute: AppLayoutRouteWithChildren,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
 }
@@ -185,17 +187,17 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/_app",
+        "/_app-layout",
         "/signin",
         "/signup"
       ]
     },
-    "/_app": {
-      "filePath": "_app.tsx",
+    "/_app-layout": {
+      "filePath": "_app-layout.tsx",
       "children": [
-        "/_app/account",
-        "/_app/vehicles",
-        "/_app/"
+        "/_app-layout/account",
+        "/_app-layout/vehicles",
+        "/_app-layout/"
       ]
     },
     "/signin": {
@@ -204,17 +206,17 @@ export const routeTree = rootRoute
     "/signup": {
       "filePath": "signup.tsx"
     },
-    "/_app/account": {
-      "filePath": "_app/account.tsx",
-      "parent": "/_app"
+    "/_app-layout/account": {
+      "filePath": "_app-layout/account.tsx",
+      "parent": "/_app-layout"
     },
-    "/_app/vehicles": {
-      "filePath": "_app/vehicles.tsx",
-      "parent": "/_app"
+    "/_app-layout/vehicles": {
+      "filePath": "_app-layout/vehicles.tsx",
+      "parent": "/_app-layout"
     },
-    "/_app/": {
-      "filePath": "_app/index.tsx",
-      "parent": "/_app"
+    "/_app-layout/": {
+      "filePath": "_app-layout/index.tsx",
+      "parent": "/_app-layout"
     }
   }
 }
