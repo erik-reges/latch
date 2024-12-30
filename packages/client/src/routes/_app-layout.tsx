@@ -11,24 +11,30 @@ import { getSession } from "@/lib/auth";
 
 export const Route = createFileRoute("/_app-layout")({
   component: AppLayout,
-  loader: async ({}) => {
+  loader: async ({ context: { sessionStore } }) => {
     const { data } = await getSession();
+
     if (!data) {
       throw redirect({
         to: "/signin",
         search: { email: undefined },
       });
     }
+
+    sessionStore.setState({
+      session: data.session,
+      user: data.user,
+    });
+
     return { session: data.session, user: data.user };
   },
 });
 function AppLayout() {
   const { user, session } = Route.useLoaderData();
-
   return (
     <SidebarProvider>
-      <div className="relative flex min-h-screen w-full overflow-hidden">
-        <AppSidebar user={user} session={session} />
+      <div className=" flex min-h-screen w-full overflow-hidden">
+        <AppSidebar />
         <SidebarInset className="">
           <AppHeader email={user.email} token={session.token} />
           <Separator className="mb-4" />

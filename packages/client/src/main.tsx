@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/dark-mode/theme-provider";
 import { treatyClient } from "@latch/api/src/lib/eden";
 import { NotFound } from "./components/error/not-found";
+import { sessionStore } from "./lib/store";
 
 export const api = treatyClient(import.meta.env.VITE_API_URL);
 export type API = typeof api;
@@ -16,6 +17,7 @@ const router = createRouter({
   context: {
     qc: qc,
     api: api,
+    sessionStore: sessionStore,
   },
   defaultNotFoundComponent: () => NotFound(),
 });

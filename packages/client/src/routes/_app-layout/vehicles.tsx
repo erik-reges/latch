@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   type SortingState,
+  type ColumnDef,
 } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,16 +31,14 @@ import {
 import { useState, useMemo } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ChevronRight,
-  Loader2,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AddVehicleDialog } from "@/components/vehicle-table/add-vehicle-dialog";
 import { Button } from "@/components/ui/button";
-import { columns } from "@/components/vehicle-table/vehicle-table";
+import type { Vehicle } from "@latch/db/drizzle/auth-schema";
+import { VehicleActions } from "@/components/vehicle-table/vehicle-actions";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { createColumns } from "@/components/vehicle-table/vehicle-table";
 
 type SearchParams = {
   page: number;
@@ -83,7 +82,7 @@ export const Route = createFileRoute("/_app-layout/vehicles")({
 function VehiclesRoute() {
   const { api, qc } = Route.useRouteContext();
   const { page, pageSize, sortField, sortOrder } = Route.useSearch();
-  const memoizedColumns = useMemo(() => columns, []);
+  const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: sortField || "yearManufactured",
@@ -93,29 +92,31 @@ function VehiclesRoute() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [searchValue, setSearchValue] = useState("");
 
-  const { data: paginatedData, isLoading: isPaginatedLoading } = useQuery({
-    queryKey: ["vehicles-paginated", page, sorting],
+  const queryKey = createQueryKey("vehicles", {
+    page,
+    sorting: `${sorting[0].id}-${sorting[0].desc ? "desc" : "asc"}`,
+  });
+
+  const memoizedColumns = useMemo(() => createColumns(queryKey), [queryKey]);
+
+  const {
+    data: paginatedData,
+    isLoading: isPaginatedLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [queryKey],
     queryFn: async () => {
-      const sortField = sorting[0]?.id ?? "yearManufactured";
-      const sortOrder = sorting[0]?.desc ? "desc" : "asc";
-
-      const queryKey = ["vehicles-paginated", page, sorting];
-      const existingData = qc.getQueryData<PaginatedVehicles>(queryKey);
-      if (existingData) {
-        return existingData;
-      }
-
       const { data } = await api.vehicles.page.get({
         query: {
           cursor: (page - 1).toString(),
-          sortField,
-          sortOrder,
+          sortField: sorting[0].id,
+          sortOrder: sorting[0]?.desc ? "desc" : "asc",
         },
       });
       if (!data) throw new Error("No data returned");
       return data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 3 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 
@@ -199,7 +200,7 @@ function VehiclesRoute() {
     },
     pageCount: Math.ceil((totalCount ?? 0) / 10),
   });
-  const navigate = useNavigate();
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-24">
@@ -212,7 +213,7 @@ function VehiclesRoute() {
           }}
           className="text-xs md:text-sm max-w-sm"
         />
-        <AddVehicleDialog />
+        <AddVehicleDialog queryKey={queryKey} />
       </div>
 
       <div className="overflow-x-auto max-w-[calc(100vw-2rem)]">
@@ -242,12 +243,12 @@ function VehiclesRoute() {
                 {isPaginatedLoading ? (
                   <TableRow>
                     <TableCell
-                      colSpan={columns.length}
-                      className="text-xs h-12 md:h-16 md:text-sm text-center"
+                      colSpan={memoizedColumns.length}
+                      className="text-sm h-12  text-center"
                     >
                       <div className="flex items-center justify-center">
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        <span className="ml-3">Loading vehicles...</span>
+                        <span className="ml-1">Loading vehicles...</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -273,8 +274,8 @@ function VehiclesRoute() {
                 ) : (
                   <TableRow className="">
                     <TableCell
-                      colSpan={columns.length}
-                      className="text-xs h-12 md:h-16 md:text-sm text-center"
+                      colSpan={memoizedColumns.length}
+                      className="text-sm h-12  text-center"
                     >
                       No results.
                     </TableCell>
@@ -290,13 +291,20 @@ function VehiclesRoute() {
         <Pagination className=" p-2">
           <PaginationContent className={`flex items-center  gap-4`}>
             <PaginationItem className="w-24 cursor-pointer">
-              <PaginationPrevious
-                className="w-full"
+              <Button
+                variant="ghost"
+                className="gap-1 pr-2.5 w-full cursor-pointer"
                 onClick={() => updatePage(page - 1)}
-              />
+                disabled={totalPages <= 1 || page === 1}
+                size="default"
+              >
+                <ChevronLeft className="h-4 w-4" />
+
+                <span>Previous</span>
+              </Button>
             </PaginationItem>
             <div
-              className={`flex w-full items-center justify-center ${totalPages === 0 ? "justify-center" : "justify-between"} gap-2 max-w-[275px] md:min-w-[275px]`}
+              className={`flex w-full items-center  ${totalPages < 2 ? "justify-center" : "justify-between"} gap-2 max-w-[275px] md:min-w-[275px]`}
             >
               <PaginationItem className="cursor-pointer p-2">
                 <PaginationLink
@@ -358,3 +366,15 @@ function VehiclesRoute() {
     </div>
   );
 }
+
+const createQueryKey = <T extends string>(
+  base: T,
+  params: Record<string, any> = {},
+) => {
+  const paramString = Object.entries(params)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+
+  return `${base}${paramString ? `?${paramString}` : ""}`;
+};

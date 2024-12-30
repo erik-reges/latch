@@ -10,14 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
+import { type SortingState } from "@tanstack/react-table";
 import { VehicleForm } from "@/components/vehicle-table/vehicle-form";
 import { api } from "@/main";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import type { VehicleFormValues } from "./vehicle-schema";
 
-export function AddVehicleDialog() {
+export function AddVehicleDialog({ queryKey }: { queryKey: string }) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -26,17 +26,11 @@ export function AddVehicleDialog() {
       ...data,
     });
 
+    queryClient.invalidateQueries({ queryKey: [queryKey] });
+
     if (!error) {
       setOpen(false);
     }
-
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["vehicles-all"] }),
-      queryClient.invalidateQueries({ queryKey: ["vehicles-paginated"] }),
-      queryClient.invalidateQueries({ queryKey: ["vehicles-count"] }),
-    ]);
-
-    queryClient.setQueryData(["table-state"], { pageIndex: 0 });
   };
 
   return (

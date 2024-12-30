@@ -21,7 +21,7 @@ import { Link } from "@tanstack/react-router";
 import { AppSwitcher } from "./app-switcher";
 import { NavUser } from "./nav-user";
 import { useMemo } from "react";
-import { type Session, type User } from "@/lib/auth";
+import { sessionStore } from "@/lib/store";
 
 const items = [
   { title: "Vehicles", url: "/vehicles", icon: TrainFront },
@@ -37,18 +37,19 @@ const items = [
   },
 ];
 
-interface AppSidebarProps {
-  user: User;
-  session: Session;
-}
+export function AppSidebar() {
+  const { session, user } = sessionStore();
 
-export function AppSidebar({ user, session }: AppSidebarProps) {
+  if (!session || !user) {
+    throw Error("no auth");
+  }
+
   const menuItems = useMemo(
     () =>
       items.map((item) => (
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton asChild>
-            <Link href={item.url}>
+            <Link preload="viewport" href={item.url}>
               <item.icon />
               <span>{item.title}</span>
             </Link>

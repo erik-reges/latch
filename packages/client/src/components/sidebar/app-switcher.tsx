@@ -77,7 +77,7 @@ export function AppSwitcher({}) {
               alignOffset={0}
             >
               <DropdownMenuLabel className="text-xs text-muted-foreground">
-                {activeTeam.name}
+                Reges
               </DropdownMenuLabel>
               {apps.map((team, index) => (
                 <DropdownMenuItem

@@ -5,9 +5,11 @@ import {
   timestamp,
   boolean,
   date,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { decimal } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
+import { randomUUIDv7 } from "bun";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -60,14 +62,14 @@ export const verification = pgTable("verification", {
 });
 
 export const vehicles = pgTable("vehicles", {
-  id: text("id")
+  id: uuid()
     .primaryKey()
-    .$defaultFn(() => createId()),
+    .$defaultFn(() => randomUUIDv7()),
   name: text("name").notNull(),
   model: text("model").notNull(),
-  maxSpeed: integer("max_speed").notNull(), // km/h
-  maxWeight: decimal("max_weight").notNull(), // tons
-  length: decimal("length").notNull(), // meters
+  maxSpeed: integer("max_speed").notNull(),
+  maxWeight: decimal("max_weight").notNull(),
+  length: decimal("length").notNull(),
   manufacturer: text("manufacturer").notNull(),
   yearManufactured: integer("year_manufactured").notNull(),
   status: text("status", {

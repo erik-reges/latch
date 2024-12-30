@@ -4,6 +4,7 @@ import { vehiclesRouter } from "./routes/vehicles";
 import { logger } from "@bogeychan/elysia-logger";
 import { config } from "./lib/config";
 import { betterAuth } from "./lib/better-auth";
+import { userRouter } from "./routes/user";
 const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
 
 export const api = new Elysia({ prefix: "/api" })
@@ -34,8 +35,9 @@ export const api = new Elysia({ prefix: "/api" })
     return betterAuth.handler(request);
   })
 
-  .use(logger())
-  .use(vehiclesRouter);
+  // .use(logger())
+  .use(vehiclesRouter)
+  .use(userRouter);
 
 api.listen(config.port);
 

@@ -2,6 +2,7 @@ import Elysia, { t } from "elysia";
 import { vehicles, type Vehicle } from "@latch/db/drizzle/auth-schema";
 import { asc, desc, eq, gt, sql } from "drizzle-orm";
 import { db } from "../plugins/db";
+import { auth } from "../plugins/auth";
 
 export const vehicleSchema = t.Object({
   name: t.String(),
@@ -30,13 +31,8 @@ export const vehiclesRouter = new Elysia({
   prefix: "/vehicles",
 })
   .use(db)
-  .get("/count", async ({ db }) => {
-    const count = await db
-      .select({ count: sql`cast(count(*) as integer)` })
-      .from(vehicles)
-      .then((res) => res[0].count);
-    return count;
-  })
+  .use(auth)
+
   .get(
     "/page",
     async ({ query, db }) => {
@@ -47,7 +43,6 @@ export const vehiclesRouter = new Elysia({
         ? (query.sortField as keyof Vehicle)
         : "yearManufactured";
 
-      // Build the order by clause
       let orderByClause;
       if (sortField === "yearManufactured") {
         orderByClause = sql`${vehicles[sortField]}::int ${
@@ -102,14 +97,7 @@ export const vehiclesRouter = new Elysia({
   .post(
     "",
     async ({ body, db }) => {
-      const vehicle = await db
-        .insert(vehicles)
-        .values({
-          ...body,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning();
+      const vehicle = await db.insert(vehicles).values(body).returning();
       return vehicle[0];
     },
     { body: vehicleSchema },

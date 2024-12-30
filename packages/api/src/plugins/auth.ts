@@ -6,8 +6,8 @@ type Sesh = {
   session: Session;
   user: User;
 } | null;
-export const authenticate = new Elysia({
-  name: "authenticate",
+export const auth = new Elysia({
+  name: "auth",
 }).derive({ as: "scoped" }, async ({ request, error }) => {
   const sesh: Sesh = await betterAuth.api.getSession({
     headers: request.headers,

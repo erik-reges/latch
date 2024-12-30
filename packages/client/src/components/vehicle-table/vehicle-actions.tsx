@@ -29,14 +29,15 @@ import {
 import { VehicleForm } from "./vehicle-form";
 import { api } from "@/main";
 import { useQueryClient } from "@tanstack/react-query";
-import { type VehicleRecord, type VehicleFormValues } from "./vehicle-schema";
+import { type VehicleFormValues } from "./vehicle-schema";
 import type { Vehicle } from "@latch/db/drizzle/auth-schema";
 
 interface VehicleActionsProps {
   vehicle: Vehicle;
+  queryKey: string;
 }
 
-export function VehicleActions({ vehicle }: VehicleActionsProps) {
+export function VehicleActions({ vehicle, queryKey }: VehicleActionsProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -49,11 +50,7 @@ export function VehicleActions({ vehicle }: VehicleActionsProps) {
     if (!error) {
       setShowDeleteDialog(false);
       setDropdownOpen(false);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["vehicles-all"] }),
-        queryClient.invalidateQueries({ queryKey: ["vehicles-paginated"] }),
-        queryClient.invalidateQueries({ queryKey: ["vehicles-count"] }),
-      ]);
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     }
   };
 

@@ -29,7 +29,7 @@ function SortingIcon({ column }: { column: any }) {
 export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
   {
     id: "actions",
-    header: () => <div className="w-10"></div>,
+    header: () => <div className="w-12"></div>,
     cell: ({ row }) => {
       const vehicle = row.original;
       return (
@@ -39,7 +39,6 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
       );
     },
     enableSorting: false,
-    size: 48,
   },
   {
     accessorKey: "name",
@@ -47,7 +46,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
       <div
         className={cn(
           "group",
-          "flex flex-1 items-center justify-center cursor-pointer select-none",
+          "flex flex-1 items-center justify-center min-w-[100px] cursor-pointer select-none",
           "transition-colors",
           "text-muted-foreground hover:text-foreground",
         )}
@@ -60,7 +59,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     sortingFn: "text",
     cell: ({ row }) => (
       <div
-        className="flex flex-1 truncate  justify-center"
+        className="flex flex-1 min-w-[100px] truncate pl-3 justify-center"
         title={row.getValue("name")}
       >
         {row.getValue("name")}
@@ -71,7 +70,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "model",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[100px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         <span>Model</span>
@@ -81,10 +80,10 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     sortingFn: "text",
     cell: ({ row }) => (
       <div
-        className="flex flex-1 truncate  justify-center"
-        title={row.getValue("name")}
+        className="flex flex-1 min-w-[100px] truncate justify.center"
+        title={row.getValue("model")}
       >
-        {row.getValue("name")}
+        {row.getValue("model")}
       </div>
     ),
   },
@@ -92,7 +91,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "maxSpeed",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1  items-center justify-center min-w-[80px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Max speed
@@ -101,7 +100,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     ),
     sortingFn: "alphanumeric",
     cell: ({ row }) => (
-      <div className="flex flex-1 truncate justify-center">
+      <div className="flex flex-1 min-w-[80px] truncate justify-center">
         {row.getValue("maxSpeed")} km/h
       </div>
     ),
@@ -110,7 +109,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "maxWeight",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[80px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Max weight
@@ -119,7 +118,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     ),
     sortingFn: "basic",
     cell: ({ row }) => (
-      <div className="flex flex-1 truncate justify-center">
+      <div className="flex flex-1 min-w-[80px] truncate justify-center">
         {row.getValue("maxWeight")} kg
       </div>
     ),
@@ -128,7 +127,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "length",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[80px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Length
@@ -137,7 +136,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     ),
     sortingFn: "basic",
     cell: ({ row }) => (
-      <div className="flex flex-1 truncate justify-center">
+      <div className="flex flex-1 min-w-[80px] truncate justify-center">
         {row.getValue("length")} cm
       </div>
     ),
@@ -146,7 +145,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "manufacturer",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[120px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Manufacturer
@@ -156,7 +155,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     sortingFn: "alphanumeric",
     cell: ({ row }) => (
       <div
-        className="flex flex-1 truncate justify-center"
+        className="flex flex-1 min-w-[120px] truncate justify-center"
         title={row.getValue("manufacturer")}
       >
         {row.getValue("manufacturer")}
@@ -167,7 +166,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "yearManufactured",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[70px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Year
@@ -176,7 +175,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     ),
     sortingFn: "alphanumeric",
     cell: ({ row }) => (
-      <div className="flex flex-1 justify-center">
+      <div className="flex flex-1 min-w-[70px] justify-center">
         {row.getValue("yearManufactured")}
       </div>
     ),
@@ -185,7 +184,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     accessorKey: "status",
     header: ({ column }) => (
       <div
-        className="flex flex-1 items-center justify-center cursor-pointer select-none"
+        className="flex flex-1 items-center justify-center min-w-[100px] cursor-pointer select-none"
         onClick={column.getToggleSortingHandler()}
       >
         Status
@@ -198,7 +197,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
       return (
         <div
           className={cn(
-            "flex flex-1 items-center justify-center gap-2",
+            "flex flex-1 min-w-[100px] items-center justify-center gap-2",
             status === "active" && "text-green-500",
             status === "maintenance" && "text-yellow-500",
             status === "decommissioned" && "text-red-500",

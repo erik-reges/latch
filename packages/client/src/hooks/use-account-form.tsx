@@ -1,16 +1,36 @@
 import { useForm } from "react-hook-form";
 import { typeboxResolver } from "@hookform/resolvers/typebox";
-import type {
-  PasswordFormValues,
-  ProfileFormValues,
-} from "@/routes/_app-layout/account";
-import { passwordSchema, profileSchema } from "@/routes/_app-layout/account";
 import { useSession } from "@/lib/auth";
+import { Type } from "@sinclair/typebox";
 
 interface UseAccountFormsProps {
   onPasswordSubmit: (data: PasswordFormValues) => Promise<void>;
   onProfileSubmit: (data: ProfileFormValues) => Promise<void>;
 }
+
+export const passwordSchema = Type.Object(
+  {
+    currentPassword: Type.String({ minLength: 8 }),
+    newPassword: Type.String({ minLength: 8 }),
+    confirmPassword: Type.String({ minLength: 8 }),
+  },
+  {
+    additionalProperties: false,
+  },
+);
+
+export const profileSchema = Type.Object(
+  {
+    name: Type.String({ minLength: 2 }),
+    phone: Type.Optional(Type.String()),
+  },
+  {
+    additionalProperties: false,
+  },
+);
+
+export type PasswordFormValues = typeof passwordSchema.static;
+export type ProfileFormValues = typeof profileSchema.static;
 
 export function useAccountForms({
   onPasswordSubmit,

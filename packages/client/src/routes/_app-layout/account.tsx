@@ -1,15 +1,15 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -17,54 +17,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
-import { changePassword } from '@/lib/auth'
-import { useAccountForms } from '@/hooks/use-account-form'
-import { Type } from '@sinclair/typebox'
+} from "@/components/ui/form";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { changePassword, useSession } from "@/lib/auth";
+import {
+  useAccountForms,
+  type PasswordFormValues,
+  type ProfileFormValues,
+} from "@/hooks/use-account-form";
+import { sessionStore } from "@/lib/store";
 
-const emailSchema = Type.Object(
-  {
-    email: Type.String({
-      pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-    }),
-    confirmEmail: Type.String({
-      pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-    }),
-  },
-  {
-    additionalProperties: false,
-  },
-)
-
-export const passwordSchema = Type.Object(
-  {
-    currentPassword: Type.String({ minLength: 8 }),
-    newPassword: Type.String({ minLength: 8 }),
-    confirmPassword: Type.String({ minLength: 8 }),
-  },
-  {
-    additionalProperties: false,
-  },
-)
-
-export const profileSchema = Type.Object(
-  {
-    name: Type.String({ minLength: 2 }),
-    phone: Type.Optional(Type.String()),
-  },
-  {
-    additionalProperties: false,
-  },
-)
-
-export type PasswordFormValues = typeof passwordSchema.static
-export type ProfileFormValues = typeof profileSchema.static
-
-export const Route = createFileRoute('/_app-layout/account')({
+export const Route = createFileRoute("/_app-layout/account")({
   component: AccountRoute,
-})
+});
 
 function AccountRoute() {
   const passwordMutation = useMutation({
@@ -72,31 +38,31 @@ function AccountRoute() {
       await changePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
-      })
+      });
     },
     onSuccess: () => {
-      toast.success('Password updated successfully')
-      passwordForm.reset()
+      toast.success("Password updated successfully");
+      passwordForm.reset();
     },
     onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
-  })
+  });
 
   const profileMutation = useMutation({
     mutationFn: async (data: ProfileFormValues) => {
       // Implement updateUser mutation here
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     },
     onSuccess: () => {
-      toast.success('Profile updated successfully')
+      toast.success("Profile updated successfully");
     },
     onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
-  })
+  });
 
-  const { api } = Route.useRouteContext()
+  const { user } = sessionStore.getState();
 
   const {
     passwordForm,
@@ -106,15 +72,15 @@ function AccountRoute() {
   } = useAccountForms({
     onPasswordSubmit: (data) => passwordMutation.mutateAsync(data),
     onProfileSubmit: (data) => profileMutation.mutateAsync(data),
-  })
+  });
   return (
-    <div className=" h-full flex justify-center py-40 ">
+    <div className=" h-full flex justify-center py-8 ">
       <div className="container max-w-xl">
         <Card>
           <CardHeader className="max-w-md mx-auto">
             <CardTitle>
               <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
-                {/* {`Account Settings for user: ${sesh?.data?.user.email ?? ""}`} */}
+                {`Account settings for user: ${user?.email ?? ""}`}
               </h2>
             </CardTitle>
             <CardDescription>
@@ -240,5 +206,5 @@ function AccountRoute() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

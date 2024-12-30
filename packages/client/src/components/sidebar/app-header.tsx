@@ -11,24 +11,22 @@ import {
   BreadcrumbLink,
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useMatches, useLocation } from "@tanstack/react-router";
+import { useMatches } from "@tanstack/react-router";
 
 export function AppHeader({ email, token }: { email: string; token: string }) {
   const matches = useMatches();
-  const location = useLocation();
 
   const getRouteLabel = (routeId: string) => {
-    // Remove leading slashes and _app-layout prefix
     const cleanPath = routeId
-      .replace(/^\/|^_app-layout\//, "") // Remove leading slash and _app-layout/
-      .replace(/^__root__$/, "") // Remove root route identifier
-      .replace(/^\/_app-layout$/, "") // Remove layout route identifier
-      .replace(/^_app-layout\//, ""); // Remove any remaining _app-layout/ prefix
+      .replace(/^\/|^_app-layout\//, "")
+      .replace(/^__root__$/, "")
+      .replace(/^\/_app-layout$/, "")
+      .replace(/^_app-layout\//, "");
 
     const routeLabels: Record<string, string> = {
       "": "Home",
       vehicles: "Vehicles",
-      account: "Account Settings",
+      account: "Account settings",
     };
 
     return routeLabels[cleanPath] || formatPathSegment(cleanPath);
@@ -42,10 +40,8 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
   };
 
   const getBreadcrumbs = () => {
-    // Filter and transform matches into breadcrumbs
     const breadcrumbs = matches
       .filter((match) => {
-        // Keep only relevant routes (exclude root and layout-only routes)
         return match.routeId !== "__root__" && match.pathname !== "/";
       })
       .map((match) => ({
@@ -54,7 +50,6 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
         isLast: false,
       }));
 
-    // Mark the last item
     if (breadcrumbs.length > 0) {
       breadcrumbs[breadcrumbs.length - 1].isLast = true;
     }
@@ -71,12 +66,15 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            {/* Always show Latch as first item */}
             <BreadcrumbItem className="hidden md:block text-xs">
-              <BreadcrumbLink href="/">Latch</BreadcrumbLink>
+              <BreadcrumbLink href="/">Reges</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem className="hidden md:block text-xs">
+              <BreadcrumbLink href="/">Traind</BreadcrumbLink>
             </BreadcrumbItem>
 
-            {/* Show separators and additional breadcrumbs */}
+            {/* dynamic ones */}
             {breadcrumbs.map((crumb, index) => (
               <React.Fragment key={crumb.path}>
                 <BreadcrumbSeparator className="hidden md:block" />
@@ -94,7 +92,7 @@ export function AppHeader({ email, token }: { email: string; token: string }) {
               </React.Fragment>
             ))}
 
-            {/* If we're at root and no other breadcrumbs, show Home */}
+            {/* root === home */}
             {breadcrumbs.length === 0 && (
               <>
                 <BreadcrumbSeparator className="hidden md:block text-xs" />

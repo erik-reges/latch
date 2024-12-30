@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "rm -rf node_modules && bun i",
     "dev": "bun --filter '*' dev",
     "dev:web": "bun --cwd packages/client dev",
     "build:web": "bun --cwd packages/client build",

@@ -44,9 +44,9 @@ export function NotFound() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <Button className="text-lg mt-4" asChild size="lg">
+          <Button className="text-lg mt-4 font-bold" asChild size="lg">
             <Link href="/">
-              <MoveLeft className="mr-2 h-4 w-4" />
+              <MoveLeft className="mr-2 h-6 w-6 scale-[1.5]" />
               Return
             </Link>
           </Button>

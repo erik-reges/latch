@@ -20,10 +20,11 @@ export const betterAuth = bAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
   basePath: "/api/auth",
   trustedOrigins: [`${process.env.FRONTEND_URL}`],
+
   session: {
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60,
+      maxAge: 60 * 60,
     },
   },
   schema: {
@@ -68,3 +69,5 @@ export const betterAuth = bAuth({
     provider: "pg",
   }),
 });
+
+betterAuth.api.getSession;

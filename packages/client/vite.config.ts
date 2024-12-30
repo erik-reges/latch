@@ -17,7 +17,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://latch-api-1337.fly.dev",
+        // target: "https://latch-api-1337.fly.dev",
+        target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,
       },

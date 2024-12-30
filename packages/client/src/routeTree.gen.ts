@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
+import { Route as ProtoImport } from './routes/proto'
 import { Route as AppLayoutImport } from './routes/_app-layout'
 import { Route as AppLayoutIndexImport } from './routes/_app-layout/index'
 import { Route as AppLayoutVehiclesImport } from './routes/_app-layout/vehicles'
@@ -29,6 +30,12 @@ const SignupRoute = SignupImport.update({
 const SigninRoute = SigninImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProtoRoute = ProtoImport.update({
+  id: '/proto',
+  path: '/proto',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -64,6 +71,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AppLayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/proto': {
+      id: '/proto'
+      path: '/proto'
+      fullPath: '/proto'
+      preLoaderRoute: typeof ProtoImport
       parentRoute: typeof rootRoute
     }
     '/signin': {
@@ -124,6 +138,7 @@ const AppLayoutRouteWithChildren = AppLayoutRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof AppLayoutRouteWithChildren
+  '/proto': typeof ProtoRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/account': typeof AppLayoutAccountRoute
@@ -132,6 +147,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/proto': typeof ProtoRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/account': typeof AppLayoutAccountRoute
@@ -142,6 +158,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_app-layout': typeof AppLayoutRouteWithChildren
+  '/proto': typeof ProtoRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/_app-layout/account': typeof AppLayoutAccountRoute
@@ -151,12 +168,20 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/signin' | '/signup' | '/account' | '/vehicles' | '/'
+  fullPaths:
+    | ''
+    | '/proto'
+    | '/signin'
+    | '/signup'
+    | '/account'
+    | '/vehicles'
+    | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/signin' | '/signup' | '/account' | '/vehicles' | '/'
+  to: '/proto' | '/signin' | '/signup' | '/account' | '/vehicles' | '/'
   id:
     | '__root__'
     | '/_app-layout'
+    | '/proto'
     | '/signin'
     | '/signup'
     | '/_app-layout/account'
@@ -167,12 +192,14 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   AppLayoutRoute: typeof AppLayoutRouteWithChildren
+  ProtoRoute: typeof ProtoRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AppLayoutRoute: AppLayoutRouteWithChildren,
+  ProtoRoute: ProtoRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
 }
@@ -188,6 +215,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_app-layout",
+        "/proto",
         "/signin",
         "/signup"
       ]
@@ -199,6 +227,9 @@ export const routeTree = rootRoute
         "/_app-layout/vehicles",
         "/_app-layout/"
       ]
+    },
+    "/proto": {
+      "filePath": "proto.tsx"
     },
     "/signin": {
       "filePath": "signin.tsx"
