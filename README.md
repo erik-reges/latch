@@ -34,3 +34,9 @@ cp ./packages/db/.env.example ./packages/db/.env
 ```bash
 bun i && bun db:migrate
 ```
+
+4. dev
+
+```bash
+bun dev
+```
