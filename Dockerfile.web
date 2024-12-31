@@ -1,40 +1,29 @@
-# Use the official Bun image as base
 FROM oven/bun:latest
 
-# Set working directory
 WORKDIR /app
 
-# Create workspace structure
 RUN mkdir -p packages/api packages/db packages/client
 
-# Copy workspace root files
 COPY package.json .
 COPY bun.lockb .
 COPY tsconfig.json .
 
-# Copy all packages
 COPY packages/db packages/db
 COPY packages/api packages/api
 COPY packages/client packages/client
 
-# Set environment variables
 ARG VITE_API_URL
 ARG VITE_ENV
 
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_ENV=$VITE_ENV
 
-# Install dependencies
 RUN bun install
 
-# Set working directory to API package
 WORKDIR /app/packages/client
 
-# Build the client
 RUN bun run build
 
-# Expose the port your app runs on
 EXPOSE 8080
 
-# Start the application in serve mode
 CMD ["bun", "run", "serve"]
