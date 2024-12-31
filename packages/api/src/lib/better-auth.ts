@@ -10,6 +10,8 @@ import { config } from "./config";
 import { database } from "../lib/database";
 import { randomUUIDv7 } from "bun";
 
+export const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
+
 const Domains: Record<string, string> = {
   development: "localhost",
   production: "latch-api-1337.fly.dev",

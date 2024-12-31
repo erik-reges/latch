@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import { vehicles, type Vehicle } from "@latch/db/drizzle/auth-schema";
-import { asc, desc, eq, gt, sql } from "drizzle-orm";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "../plugins/db";
 import { auth } from "../plugins/auth";
 
