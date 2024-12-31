@@ -72,7 +72,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={user} token={session.token} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

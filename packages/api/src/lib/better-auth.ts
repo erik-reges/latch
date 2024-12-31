@@ -17,21 +17,20 @@ const Domains: Record<string, string> = {
 
 export const betterAuth = bAuth({
   appName: "latch-auth",
-  secret: process.env.BETTER_AUTH_SECRET!,
-  basePath: "/api/auth",
-  trustedOrigins: [`${process.env.FRONTEND_URL}`],
-
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * 60,
-    },
-  },
   schema: {
     user,
     session,
     verification,
     account,
+  },
+  secret: process.env.BETTER_AUTH_SECRET!,
+  basePath: "/api/auth",
+  trustedOrigins: [`${process.env.FRONTEND_URL}`],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60,
+    },
   },
   advanced: {
     generateId: () => randomUUIDv7(),

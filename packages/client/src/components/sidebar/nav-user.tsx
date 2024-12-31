@@ -19,15 +19,12 @@ import {
 import { revokeSession, signOut, type User } from "@/lib/auth";
 import { useNavigate } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { sessionStore } from "@/lib/store";
 
-interface NavUserProps {
-  user: User;
-  token: string;
-}
-
-export function NavUser({ user, token }: NavUserProps) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
+  const { user, session } = sessionStore();
 
   return (
     <SidebarMenu>
@@ -87,11 +84,11 @@ export function NavUser({ user, token }: NavUserProps) {
                 signOut({
                   fetchOptions: {
                     onSuccess: () => {
-                      revokeSession({ token: token });
+                      revokeSession({ token: session!.token });
                       navigate({
                         to: "/signin",
                         search: {
-                          email: user.email,
+                          email: user!.email,
                         },
                       });
                     },

@@ -1,21 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { redirect } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_app-layout/')({
+export const Route = createFileRoute("/_app-layout/")({
   component: RouteComponent,
   beforeLoad: ({}) => {
     throw redirect({
-      to: '/vehicles',
+      to: "/vehicles",
       search: {
         page: 1,
         pageSize: 10,
-        sortField: 'yearManufactured',
-        sortOrder: 'asc',
+        sortField: "createdAt",
+        sortOrder: "asc",
       },
-    })
+    });
   },
-})
+});
 
 function RouteComponent() {
-  return <div></div>
+  return <div></div>;
 }

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { typeboxResolver } from "@hookform/resolvers/typebox";
 import { useSession } from "@/lib/auth";
 import { Type } from "@sinclair/typebox";
+import { sessionStore } from "@/lib/store";
 
 interface UseAccountFormsProps {
   onPasswordSubmit: (data: PasswordFormValues) => Promise<void>;
@@ -36,7 +37,7 @@ export function useAccountForms({
   onPasswordSubmit,
   onProfileSubmit,
 }: UseAccountFormsProps) {
-  const { data } = useSession();
+  const { user } = sessionStore.getState();
   const passwordForm = useForm<PasswordFormValues>({
     resolver: typeboxResolver(passwordSchema),
     defaultValues: {
@@ -49,7 +50,7 @@ export function useAccountForms({
   const profileForm = useForm<ProfileFormValues>({
     resolver: typeboxResolver(profileSchema),
     defaultValues: {
-      name: data?.user?.name || "",
+      name: user?.name || "",
     },
   });
 

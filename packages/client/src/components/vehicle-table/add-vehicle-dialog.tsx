@@ -1,5 +1,3 @@
-"use client";
-
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { type SortingState } from "@tanstack/react-table";
 import { VehicleForm } from "@/components/vehicle-table/vehicle-form";
 import { api } from "@/main";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,13 +19,10 @@ export function AddVehicleDialog({ queryKey }: { queryKey: string }) {
   const queryClient = useQueryClient();
 
   const onSubmit = async (data: VehicleFormValues) => {
-    const { data: createdVehicle, error } = await api.vehicles.post({
-      ...data,
-    });
-
-    queryClient.invalidateQueries({ queryKey: [queryKey] });
+    const { error } = await api.vehicles.post({ ...data });
 
     if (!error) {
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
       setOpen(false);
     }
   };

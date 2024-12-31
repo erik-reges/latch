@@ -5,13 +5,19 @@
   "scripts": {
     "clean": "rm -rf node_modules && bun i",
     "dev": "bun --filter '*' dev",
+    "db:migrate": "bun --filter @latch/db migrate",
+    "db:push": "bun --filter @latch/db push",
+    "db:studio": "bun --filter @latch/db studio",
+    "db:pull": "bun --filter @latch/db introspect",
+    "dev:api": "bun --cwd packages/api dev",
     "dev:web": "bun --cwd packages/client dev",
     "build:web": "bun --cwd packages/client build",
-    "deploy:web": "fly deploy --config ./fly.web.toml --dockerfile ./Dockerfile.web",
-    "launch:web": "fly launch --config ./fly.web.toml --dockerfile ./Dockerfile.web",
-    "dev:api": "bun --cwd packages/api dev",
+    "docker:api": "docker build -f Dockerfile.api -t latch-api .",
+    "docker:web": "docker build -f Dockerfile.web -t latch-web .",
+    "docker:api:run": "docker run -p 3000:3000 latch-api",
+    "docker:web:run": "docker run -p 5173:5173 latch-web",
     "deploy:api": "fly deploy --config ./fly.api.toml --dockerfile ./Dockerfile.api",
-    "launch:api": "fly launch --config ./fly.api.toml --dockerfile ./Dockerfile.api",
+    "deploy:web": "fly deploy --config ./fly.web.toml --dockerfile ./Dockerfile.web",
     "deploy!": "bun deploy:api && bun deploy:web",
     "commit": "git add . && git commit -m \"stuff\" && git push",
     "release": "bun commit && bun run deploy!",
@@ -28,8 +34,5 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@better-fetch/fetch": "^1.1.12"
   }
 }

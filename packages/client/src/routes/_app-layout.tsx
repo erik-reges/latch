@@ -12,6 +12,11 @@ import { getSession } from "@/lib/auth";
 export const Route = createFileRoute("/_app-layout")({
   component: AppLayout,
   loader: async ({ context: { sessionStore } }) => {
+    const { session, user } = sessionStore.getState();
+    if (session && user) {
+      return { session, user };
+    }
+
     const { data } = await getSession();
 
     if (!data) {

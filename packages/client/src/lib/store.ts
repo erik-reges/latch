@@ -9,9 +9,4 @@ interface SeshState {
 export const sessionStore = create<SeshState>((set) => ({
   user: null,
   session: null,
-  actions: {
-    set: (data: SeshState) => set(data),
-    get: () => sessionStore.getState(),
-    delete: () => set({ user: null, session: null }),
-  },
 }));

@@ -1,14 +1,12 @@
 import { cors } from "@elysiajs/cors";
 import Elysia from "elysia";
 import { vehiclesRouter } from "./routes/vehicles";
-import { logger } from "@bogeychan/elysia-logger";
 import { config } from "./lib/config";
 import { betterAuth } from "./lib/better-auth";
 import { userRouter } from "./routes/user";
 const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
 
 export const api = new Elysia({ prefix: "/api" })
-  .get("/health", () => `healthy server`)
   .use(
     cors({
       origin: config.isDev
@@ -29,13 +27,13 @@ export const api = new Elysia({ prefix: "/api" })
       preflight: true,
     }),
   )
-  .all("/auth/*", async ({ request, error }) => {
-    if (!BETTER_AUTH_ACCEPT_METHODS.includes(request.method)) return error(405);
+  .all("/auth/*", async ({ request, error }) =>
+    !BETTER_AUTH_ACCEPT_METHODS.includes(request.method)
+      ? error(405)
+      : betterAuth.handler(request),
+  )
 
-    return betterAuth.handler(request);
-  })
-
-  // .use(logger())
+  .get("/health", () => `healthy server`)
   .use(vehiclesRouter)
   .use(userRouter);
 

@@ -73,14 +73,14 @@ export const Route = createFileRoute("/_app-layout/vehicles")({
     return {
       page: Number(search?.page ?? 1),
       pageSize: Number(search?.pageSize ?? 10),
-      sortField: (search?.sortField as string) ?? "yearManufactured",
+      sortField: (search?.sortField as string) ?? "createdAt",
       sortOrder: (search?.sortOrder as "asc" | "desc") ?? "desc",
     };
   },
 });
 
 function VehiclesRoute() {
-  const { api, qc } = Route.useRouteContext();
+  const { api } = Route.useRouteContext();
   const { page, pageSize, sortField, sortOrder } = Route.useSearch();
   const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([
@@ -124,13 +124,13 @@ function VehiclesRoute() {
 
   const totalPages = Math.ceil((totalCount ?? 0) / pageSize);
 
-  const updatePage = (newPage: number) => {
-    navigate({
+  const updatePage = async (newPage: number) => {
+    await navigate({
       to: "/vehicles",
       search: (): SearchParams => ({
         page: Math.max(1, Math.min(totalPages, newPage)),
         pageSize: 10,
-        sortField: sorting[0]?.id ?? "yearManufactured",
+        sortField: sorting[0]?.id ?? "createdAt",
         sortOrder: sorting[0]?.desc ? "desc" : "asc",
       }),
     });
@@ -177,12 +177,18 @@ function VehiclesRoute() {
       if (typeof updater === "function") {
         const newSorting = updater(sorting);
         setSorting(newSorting);
-
-        updatePage(1);
+        navigate({
+          to: "/vehicles",
+          search: (): SearchParams => ({
+            page: page,
+            pageSize: pageSize,
+            sortField: newSorting[0]?.id ?? "createdAt",
+            sortOrder: newSorting[0]?.desc ? "desc" : "asc",
+          }),
+        });
       }
     },
     manualSorting: true,
-
     manualPagination: true,
     onPaginationChange: (updater) => {
       if (typeof updater === "function") {

@@ -1,5 +1,3 @@
-"use client";
-
 import { Settings, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import {
@@ -55,19 +53,13 @@ export function VehicleActions({ vehicle, queryKey }: VehicleActionsProps) {
   };
 
   const handleEdit = async (data: VehicleFormValues) => {
-    const { error } = await api.vehicles({ id: vehicle.id }).put({
+    const { error } = await api.vehicles({ id: vehicle.id }).patch({
       ...data,
-      lastMaintenanceDate: data.lastMaintenanceDate || null,
-      nextMaintenanceDate: data.nextMaintenanceDate || null,
     });
 
     if (!error) {
       setShowEditDialog(false);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["vehicles-all"] }),
-        queryClient.invalidateQueries({ queryKey: ["vehicles-paginated"] }),
-        queryClient.invalidateQueries({ queryKey: ["vehicles-count"] }),
-      ]);
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     }
   };
 
@@ -89,7 +81,7 @@ export function VehicleActions({ vehicle, queryKey }: VehicleActionsProps) {
           <DropdownMenuItem
             onClick={() => {
               setShowEditDialog(true);
-              setDropdownOpen(false); // Close dropdown when opening edit dialog
+              setDropdownOpen(false);
             }}
           >
             <Pencil className="mr-2 h-4 w-4" />
@@ -98,7 +90,7 @@ export function VehicleActions({ vehicle, queryKey }: VehicleActionsProps) {
           <DropdownMenuItem
             onClick={() => {
               setShowDeleteDialog(true);
-              setDropdownOpen(false); // Close dropdown when opening delete dialog
+              setDropdownOpen(false);
             }}
             className="text-destructive"
           >

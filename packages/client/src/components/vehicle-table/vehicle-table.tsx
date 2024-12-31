@@ -53,7 +53,7 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
         )}
         onClick={column.getToggleSortingHandler()}
       >
-        <span>Make</span>
+        <span>Name</span>
         <SortingIcon column={column} />
       </div>
     ),
@@ -82,9 +82,9 @@ export const createColumns = (queryKey: string): ColumnDef<Vehicle>[] => [
     cell: ({ row }) => (
       <div
         className="flex flex-1 truncate  justify-center"
-        title={row.getValue("name")}
+        title={row.getValue("model")}
       >
-        {row.getValue("name")}
+        {row.getValue("model")}
       </div>
     ),
   },

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { changePassword, useSession } from "@/lib/auth";
+import { changePassword, updateUser, useSession } from "@/lib/auth";
 import {
   useAccountForms,
   type PasswordFormValues,
@@ -50,9 +50,13 @@ function AccountRoute() {
   });
 
   const profileMutation = useMutation({
-    mutationFn: async (data: ProfileFormValues) => {
-      // Implement updateUser mutation here
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    mutationFn: async (input: ProfileFormValues) => {
+      const { data, error } = await updateUser({ name: input.name });
+      if (error) {
+        throw Error("error");
+      }
+      sessionStore.setState({ user: data });
+      return;
     },
     onSuccess: () => {
       toast.success("Profile updated successfully");
@@ -120,19 +124,7 @@ function AccountRoute() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={profileForm.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+
                     <Button type="submit" disabled={profileMutation.isPending}>
                       {profileMutation.isPending && (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

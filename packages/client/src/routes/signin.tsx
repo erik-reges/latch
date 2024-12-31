@@ -88,7 +88,7 @@ export function SignIn({}) {
           search: {
             page: 1,
             pageSize: 10,
-            sortField: "yearManufactured",
+            sortField: "createdAt",
             sortOrder: "desc",
           },
         });
