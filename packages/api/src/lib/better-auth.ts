@@ -1,11 +1,6 @@
 import { betterAuth as bAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-  user,
-  session,
-  verification,
-  account,
-} from "@latch/db/drizzle/auth-schema";
+import { user, session, verification, account } from "@latch/db/drizzle/schema";
 import { config } from "./config";
 import { database } from "../lib/database";
 import { randomUUIDv7 } from "bun";
@@ -70,5 +65,3 @@ export const betterAuth = bAuth({
     provider: "pg",
   }),
 });
-
-betterAuth.api.getSession;

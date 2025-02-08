@@ -1,5 +1,5 @@
 import Elysia, { t } from "elysia";
-import { vehicles, type Vehicle } from "@latch/db/drizzle/auth-schema";
+import { vehicles, type Vehicle } from "@latch/db/drizzle/schema";
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "../plugins/db";
 import { auth } from "../plugins/auth";
@@ -31,7 +31,7 @@ export const vehiclesRouter = new Elysia({
   prefix: "/vehicles",
 })
   .use(db)
-  .use(auth)
+  // .use(auth)
 
   .get(
     "/page",
@@ -73,7 +73,7 @@ export const vehiclesRouter = new Elysia({
       query: t.Object({
         cursor: t.Optional(t.String()),
         sortField: t.Optional(t.String()),
-        sortOrder: t.Optional(t.String()),
+        sortOrder: t.Optional(t.Enum({ asc: "asc", desc: "desc" })),
       }),
     },
   )
@@ -86,6 +86,14 @@ export const vehiclesRouter = new Elysia({
       return await db.select().from(vehicles).where(eq(vehicles.id, id));
     },
     { params: t.Object({ id: t.String() }) },
+  )
+  .post(
+    "/batch",
+    async ({ body, db }) => {
+      const batch = await db.insert(vehicles).values(body).returning();
+      return batch;
+    },
+    { body: t.Array(vehicleSchema) },
   )
   .post(
     "",

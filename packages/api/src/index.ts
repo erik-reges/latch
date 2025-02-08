@@ -4,6 +4,7 @@ import { vehiclesRouter } from "./routes/vehicles";
 import { config } from "./lib/config";
 import { BETTER_AUTH_ACCEPT_METHODS, betterAuth } from "./lib/better-auth";
 import { userRouter } from "./routes/user";
+import { logger } from "@chneau/elysia-logger";
 
 export const api = new Elysia({ prefix: "/api" })
   .use(
@@ -33,8 +34,12 @@ export const api = new Elysia({ prefix: "/api" })
   )
 
   .get("/health", () => `healthy server`)
+  .use(logger())
   .use(vehiclesRouter)
-  .use(userRouter);
+  .use(userRouter)
+  .onError((err) => {
+    console.log(err);
+  });
 
 api.listen(config.port);
 

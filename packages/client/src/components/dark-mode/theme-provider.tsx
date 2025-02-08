@@ -14,7 +14,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "blue",
+  theme: "dark",
   setTheme: () => null,
 };
 

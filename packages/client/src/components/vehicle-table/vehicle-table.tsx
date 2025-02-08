@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { Vehicle } from "@latch/db/drizzle/auth-schema";
+import type { Vehicle } from "@latch/db/drizzle/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { VehicleActions } from "./vehicle-actions";

@@ -34,7 +34,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AddVehicleDialog } from "@/components/vehicle-table/add-vehicle-dialog";
 import { Button } from "@/components/ui/button";
-import type { Vehicle } from "@latch/db/drizzle/auth-schema";
+import type { Vehicle } from "@latch/db/drizzle/schema";
 import { VehicleActions } from "@/components/vehicle-table/vehicle-actions";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,26 +45,6 @@ type SearchParams = {
   pageSize: number;
   sortField: string;
   sortOrder: "asc" | "desc";
-};
-type PaginatedVehicles = {
-  data: {
-    length: string;
-    model: string;
-    id: string;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
-    maxSpeed: number;
-    maxWeight: string;
-    manufacturer: string;
-    yearManufactured: number;
-    status: "active" | "maintenance" | "decommissioned";
-    lastMaintenanceDate: string | null;
-    nextMaintenanceDate: string | null;
-  }[];
-  nextCursor: number | undefined;
-  hasMore: boolean;
-  totalCount: number;
 };
 
 export const Route = createFileRoute("/_app-layout/vehicles")({
@@ -142,11 +122,11 @@ function VehiclesRoute() {
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setGlobalFilter(value);
-  }, 200);
+  }, 125);
 
   const filteredData = useMemo(
     () =>
-      vehicles.filter((item) =>
+      vehicles.filter((item: Vehicle) =>
         Object.values(item).some(
           (val) =>
             val &&

@@ -28,7 +28,7 @@ import { VehicleForm } from "./vehicle-form";
 import { api } from "@/main";
 import { useQueryClient } from "@tanstack/react-query";
 import { type VehicleFormValues } from "./vehicle-schema";
-import type { Vehicle } from "@latch/db/drizzle/auth-schema";
+import type { Vehicle } from "@latch/db/drizzle/schema";
 
 interface VehicleActionsProps {
   vehicle: Vehicle;
